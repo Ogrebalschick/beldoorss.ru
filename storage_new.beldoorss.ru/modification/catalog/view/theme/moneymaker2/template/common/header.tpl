@@ -158,10 +158,16 @@
                             </ul>
                         <?php } ?>
                         <div class="header__contacts">
+                            <?php
+                            $phone = $moneymaker2_header_contacts_phone ? $moneymaker2_header_contacts_phone : $telephone;
+
+                            // Удаляем всё, кроме цифр (\d) и знака плюс (+)
+                            $phoneWithoutSymbols = preg_replace('/[^\d+]/', '', $phone);
+                            ?>
                             <div class="header__buttons">
-                                <a href="https://t.me/Sergeysmirnofff"><img src="catalog/view/theme/moneymaker2/image/svg/telegram.svg" alt=""></a>
-                                <a href="https://wa.me/+79152757724"><img src="catalog/view/theme/moneymaker2/image/svg/whatsapp.svg" alt=""></a>
-                                <a href="tel:+74951362246" class="header-phone-btn-mobile"><img src="catalog/view/theme/moneymaker2/image/svg/phone.svg" alt=""></a>
+                                <a href="https://t.me/<?php echo $phoneWithoutSymbols; ?>"><img src="catalog/view/theme/moneymaker2/image/svg/telegram.svg" alt=""></a>
+                                <a href="https://wa.me/<?php echo $phoneWithoutSymbols; ?> "><img src="catalog/view/theme/moneymaker2/image/svg/whatsapp.svg" alt=""></a>
+                                <a href="tel:<?php echo $phoneWithoutSymbols; ?>" class="header-phone-btn-mobile"><img src="catalog/view/theme/moneymaker2/image/svg/phone.svg" alt=""></a>
                             </div>
                             <div id="contacts" class="header__call dropdown">
                                 <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
@@ -239,8 +245,8 @@
                         <a href="#"><img src="catalog/view/theme/moneymaker2/image/svg/whatsapp.svg" alt=""></a>
                     </div>
                     <div class="header__call">
-                        <a href="tel:+79152757724">
-                            +7 (915) 275-77-24
+                        <a href="tel:<?php echo $phoneWithoutSymbols; ?>">
+                            <?php $moneymaker2_header_contacts_phone ? $moneymaker2_header_contacts_phone : $telephone ?>
                             <span>Обратный звонок</span>
                         </a>
                     </div>
