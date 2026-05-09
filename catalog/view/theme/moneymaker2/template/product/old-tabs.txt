@@ -1,0 +1,145 @@
+<?php if ($description=="<p><br></p>") $description=""; ?>
+                        <!-- DISPLAY:NONE -->
+                        <ul class="tab" <?php if ($moneymaker2_product_tabs_hide) { ?>style="display:none;" <?php } ?>>
+                            <?php if ($description) { ?>
+                                <li class="tablinks active">
+                                    <a href="#tab-description" data-toggle="tab">
+                                        <?php echo $tab_description; ?>
+                                    </a>
+                                </li>
+                            <?php } ?>
+                            <?php if ($attribute_groups||$weight||$length||$width||$height||$moneymaker2_attributes_code) { ?>
+                                <li class="tablinks<?php if (!$description) { ?> active<?php } ?>">
+                                    <a href="#tab-specification" data-toggle="tab">
+                                        <?php echo $tab_attribute; ?>
+                                    </a>
+                                </li>
+                            <?php } ?>
+                            <?php if ($review_status) { ?>
+                                <li class="tablinks">
+                                    <a href="#tab-review" data-toggle="tab">
+                                        <?php echo $tab_review; ?>
+                                    </a>
+                                </li>
+                            <?php } ?>
+                            <?php if ($moneymaker2_product_tabs) { ?>
+                                <?php foreach ($moneymaker2_product_tabs as $key => $value) { ?>
+                                    <?php if ($value['link']) { ?>
+                                        <li class="tablinks">
+                                            <a href="#tab-additional-<?php echo $key; ?>" data-toggle="tab"><i
+                                                    class="fa fa-fw fa-<?php echo $value['icon']; ?>"></i>
+                                                <?php echo $value['name']; ?>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                <?php } ?>
+                            <?php } ?>
+                        </ul>
+            
+                        <div class="tab-content">
+                            <?php if ($description) { ?>
+                                <div class="tab-pane fade in active" id="tab-description">
+                                    <?php if ($moneymaker2_product_tabs_headers) { ?>
+                                        <h3>
+                                            <?php echo $moneymaker2_product_description_header; ?>
+                                        </h3>
+                                    <?php } ?>
+                                        <div itemprop="description">
+                                            <?php echo $description; ?>
+                                        </div>
+                                    <?php if ($tags) { ?>
+                                        <p>
+                                            <?php echo $text_tags; ?>
+                                            <?php for ($i = 0; $i < count($tags); $i++) { ?>
+                                            <?php if ($i < (count($tags) - 1)) { ?>
+                                            <a href="<?php echo $tags[$i]['href']; ?>">
+                                                <?php echo $tags[$i]['tag']; ?>
+                                            </a>,
+                                            <?php } else { ?>
+                                            <a href="<?php echo $tags[$i]['href']; ?>">
+                                                <?php echo $tags[$i]['tag']; ?>
+                                            </a>
+                                            <?php } ?>
+                                            <?php } ?>
+                                        </p>
+                                    <?php } ?>
+                                </div>
+                            <?php } ?>
+                            <?php if ($attribute_groups||$weight||$length||$width||$height||$moneymaker2_attributes_code) { ?>
+                                <div class="tab-pane fade<?php if ($moneymaker2_product_tabs_hide||!$description) { ?> in active<?php } ?>"
+                                    id="tab-specification">
+                                    <?php if ($moneymaker2_product_tabs_headers) { ?>
+                                        <h3>
+                                            <?php echo $moneymaker2_product_attribute_header; ?>
+                                        </h3>
+                                    <?php } ?>
+                                    <div class="<?php if ($moneymaker2_product_tabs_attributes_responsive) { ?>table-responsive<?php } ?>">
+                                        <table class="table table-hover">
+                                            <?php foreach ($attribute_groups as $attribute_group) { ?>
+                                            <tbody class="attribute_groups">
+                                                <tr>
+                                                    <th colspan="2" class="text-center">
+                                                        <?php echo $attribute_group['name']; ?>
+                                                    </th>
+                                                </tr>
+                                            </tbody>
+                                            <tbody>
+                                                <?php foreach ($attribute_group['attribute'] as $attribute) { ?>
+                                                <tr>
+                                                    <td>
+                                                        <?php echo $attribute['name']; ?>
+                                                    </td>
+                                                    <td>
+                                                        <?php echo $attribute['text']; ?>
+                                                    </td>
+                                                </tr>
+                                                <?php } ?>
+                                            </tbody>
+                                            <?php } ?>
+                                            <?php if ($weight||$length||$width||$height||$moneymaker2_attributes_code) { ?>
+                                                <tbody class="weight-length-height-moneymaker2_attributes_code">
+                                                    <tr>
+                                                        <th colspan="2" class="text-center">
+                                                            <?php echo $text_product; ?>
+                                                        </th>
+                                                    </tr>
+                                                </tbody>
+                                                <tbody>
+                                                    <?php if ($moneymaker2_attributes_code) { ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo $moneymaker2_product_code_caption; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $moneymaker2_attributes_code; ?>
+                                                        </td>
+                                                    </tr>
+                                                    <?php } ?>
+                                                    <?php if ($weight) { ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo $text_weight; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $weight; ?>
+                                                        </td>
+                                                    </tr>
+                                                    <?php } ?>
+                                                    <?php if ($length||$width||$height) { ?>
+                                                    <tr>
+                                                        <td>
+                                                            <?php echo $text_dimension; ?>
+                                                        </td>
+                                                        <td>
+                                                            <?php echo $length; ?> x
+                                                            <?php echo $width; ?> x
+                                                            <?php echo $height; ?>
+                                                        </td>
+                                                    </tr>
+                                                    <?php } ?>
+                                                </tbody>
+                                            <?php } ?>
+                                        </table>
+                                    </div>
+                                </div>
+                            <?php } ?>

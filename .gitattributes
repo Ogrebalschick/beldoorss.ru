@@ -1,0 +1,3 @@
+# Игнорировать при создании архива для деплоя
+/image/ export-ignore
+/docs/  export-ignore

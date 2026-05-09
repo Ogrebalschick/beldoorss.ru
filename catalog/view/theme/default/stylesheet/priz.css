@@ -1,0 +1,62 @@
+ul.see {  
+   width: 105px;
+float: right;
+margin: 0;
+padding: 0;
+border: 0;
+margin-top: 8px;
+min-height: 160px;
+}
+.see li {  
+   list-style: none;
+}
+.see a {
+   
+display: inline-block !important;
+vertical-align: middle;
+line-height: normal;
+}
+.price_box {
+   width: 61px;
+margin-right: 10px;
+min-height: 1px;
+display: inline-block;
+border-bottom: 1px solid #C0C0C0;
+}
+.price_box .weight {
+    display: block;
+    color: #6b6a6a;
+    font-size: 12px;
+}
+.price_box .price {
+    display: block;
+    color: #e30513;
+    font: bold 15px Cuprum;
+    text-align: left;
+}
+.clearr {
+    float: none !important;
+    clear: both;
+}
+.product-grid .image {
+    display: block;
+    overflow: hidden;
+    width: 100px;
+    float: left;
+}
+.product-list .price {
+    height: 30px;
+}
+.product-thumb .button-group {display: none;}
+
+.product-thumb h4 {
+    font-weight: bold;
+    text-align: center;
+}
+.product-grid .product-thumb .image {
+    float: left;
+}
+.product-thumb .caption {
+    padding: 0 20px;
+    min-height: 80px;
+}
