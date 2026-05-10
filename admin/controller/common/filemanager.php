@@ -1,5 +1,24 @@
 <?php
 class ControllerCommonFileManager extends Controller {
+	/**
+	 * Список изображений без GLOB_BRACE (на Windows фигурные скобки в glob часто не работают — пропадали webp/svg).
+	 */
+	private function getImageFilesInDirectory($directory, $filter_name) {
+		$prefix = $directory . '/' . ($filter_name !== null ? $filter_name : '');
+		$extensions = array(
+			'jpg', 'jpeg', 'png', 'gif', 'svg', 'webp',
+			'JPG', 'JPEG', 'PNG', 'GIF', 'SVG', 'WEBP'
+		);
+		$files = array();
+		foreach ($extensions as $ext) {
+			$found = glob($prefix . '*.' . $ext);
+			if (!empty($found)) {
+				$files = array_merge($files, $found);
+			}
+		}
+		return array_values(array_unique($files));
+	}
+
 	public function index() {
 		$this->load->language('common/filemanager');
 
@@ -44,12 +63,8 @@ class ControllerCommonFileManager extends Controller {
 				$directories = array();
 			}
 
-			// Get files
-			$files = glob($directory . '/' . $filter_name . '*.{jpg,jpeg,png,gif,svg,JPG,JPEG,PNG,GIF,SVG}', GLOB_BRACE);
-
-			if (!$files) {
-				$files = array();
-			}
+			// Get files (без GLOB_BRACE — совместимость с Windows)
+			$files = $this->getImageFilesInDirectory($directory, $filter_name);
 		}
 
 		// Merge directories and files
@@ -83,12 +98,17 @@ class ControllerCommonFileManager extends Controller {
 					'href'  => $this->url->link('common/filemanager', 'token=' . $this->session->data['token'] . '&directory=' . urlencode(utf8_substr($image, utf8_strlen(DIR_IMAGE . 'catalog/'))) . $url, true)
 				);
 			} elseif (is_file($image)) {
+				$rel_image = utf8_substr($image, utf8_strlen(DIR_IMAGE));
+				$thumb = $this->model_tool_image->resize($rel_image, 100, 100);
+				if ($thumb === null || $thumb === '') {
+					$thumb = rtrim($server, '/') . '/image/' . str_replace(' ', '%20', $rel_image);
+				}
 				$data['images'][] = array(
-					'thumb' => $this->model_tool_image->resize(utf8_substr($image, utf8_strlen(DIR_IMAGE)), 100, 100),
+					'thumb' => $thumb,
 					'name'  => implode(' ', $name),
 					'type'  => 'image',
-					'path'  => utf8_substr($image, utf8_strlen(DIR_IMAGE)),
-					'href'  => $server . 'image/' . utf8_substr($image, utf8_strlen(DIR_IMAGE))
+					'path'  => $rel_image,
+					'href'  => $server . 'image/' . $rel_image
 				);
 			}
 		}
@@ -229,14 +249,24 @@ class ControllerCommonFileManager extends Controller {
 			// Check if multiple files are uploaded or just one
 			$files = array();
 
-			if (!empty($this->request->files['file']['name']) && is_array($this->request->files['file']['name'])) {
-				foreach (array_keys($this->request->files['file']['name']) as $key) {
+			if (!empty($this->request->files['file']['name'])) {
+				if (is_array($this->request->files['file']['name'])) {
+					foreach (array_keys($this->request->files['file']['name']) as $key) {
+						$files[] = array(
+							'name'     => $this->request->files['file']['name'][$key],
+							'type'     => $this->request->files['file']['type'][$key],
+							'tmp_name' => $this->request->files['file']['tmp_name'][$key],
+							'error'    => $this->request->files['file']['error'][$key],
+							'size'     => $this->request->files['file']['size'][$key]
+						);
+					}
+				} else {
 					$files[] = array(
-						'name'     => $this->request->files['file']['name'][$key],
-						'type'     => $this->request->files['file']['type'][$key],
-						'tmp_name' => $this->request->files['file']['tmp_name'][$key],
-						'error'    => $this->request->files['file']['error'][$key],
-						'size'     => $this->request->files['file']['size'][$key]
+						'name'     => $this->request->files['file']['name'],
+						'type'     => $this->request->files['file']['type'],
+						'tmp_name' => $this->request->files['file']['tmp_name'],
+						'error'    => $this->request->files['file']['error'],
+						'size'     => $this->request->files['file']['size']
 					);
 				}
 			}
@@ -251,30 +281,47 @@ class ControllerCommonFileManager extends Controller {
 						$json['error'] = $this->language->get('error_filename');
 					}
 					
-					// Allowed file extension types
+					// Allowed file extension types (webp, svg в нижнем регистре; загрузка XXX.WEBP тоже ок)
 					$allowed = array(
 						'jpg',
 						'jpeg',
 						'gif',
+						'png',
 						'svg',
-						'png'
+						'webp'
 					);
-	
-					if (!in_array(utf8_strtolower(utf8_substr(strrchr($filename, '.'), 1)), $allowed)) {
+
+					$file_ext = utf8_strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+
+					if (!in_array($file_ext, $allowed)) {
 						$json['error'] = $this->language->get('error_filetype');
 					}
-					
+
 					// Allowed file mime types
-					$allowed = array(
+					$allowed_mime = array(
 						'image/jpeg',
 						'image/pjpeg',
 						'image/png',
 						'image/x-png',
+						'image/gif',
 						'image/svg+xml',
-						'image/gif'
+						'image/webp',
+						'text/plain',
+						'text/xml'
 					);
-	
-					if (!in_array($file['type'], $allowed)) {
+
+					$mime_ok = in_array($file['type'], $allowed_mime);
+					if (!$mime_ok && $file['type'] === 'application/octet-stream' && in_array($file_ext, array('webp', 'svg'))) {
+						$mime_ok = true;
+					}
+					if (!$mime_ok && $file_ext === 'svg' && strpos($file['type'], 'svg') !== false) {
+						$mime_ok = true;
+					}
+					if (!$mime_ok && in_array($file_ext, array('webp', 'svg')) && is_file($file['tmp_name']) && @getimagesize($file['tmp_name']) !== false) {
+						$mime_ok = true;
+					}
+
+					if (!$mime_ok) {
 						$json['error'] = $this->language->get('error_filetype');
 					}
 

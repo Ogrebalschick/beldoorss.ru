@@ -18,12 +18,20 @@ class Image {
 			$this->bits = isset($info['bits']) ? $info['bits'] : '';
 			$this->mime = isset($info['mime']) ? $info['mime'] : '';
 
+			$this->image = null;
+
 			if ($this->mime == 'image/gif') {
 				$this->image = imagecreatefromgif($file);
 			} elseif ($this->mime == 'image/png') {
 				$this->image = imagecreatefrompng($file);
 			} elseif ($this->mime == 'image/jpeg') {
 				$this->image = imagecreatefromjpeg($file);
+			} elseif ($this->mime == 'image/webp' && function_exists('imagecreatefromwebp')) {
+				$this->image = imagecreatefromwebp($file);
+			}
+
+			if (!$this->image) {
+				exit('Error: Could not load image ' . $file . '!');
 			}
 		} else {
 			exit('Error: Could not load image ' . $file . '!');
@@ -59,17 +67,29 @@ class Image {
 
 		$extension = strtolower($info['extension']);
 
-		if (is_resource($this->image)) {
+		if ($this->isImageResource()) {
 			if ($extension == 'jpeg' || $extension == 'jpg') {
 				imagejpeg($this->image, $file, $quality);
 			} elseif ($extension == 'png') {
 				imagepng($this->image, $file);
 			} elseif ($extension == 'gif') {
 				imagegif($this->image, $file);
+			} elseif ($extension == 'webp' && function_exists('imagewebp')) {
+				imagewebp($this->image, $file, 85);
 			}
 
 			imagedestroy($this->image);
 		}
+	}
+
+	private function isImageResource() {
+		if (!$this->image) {
+			return false;
+		}
+		if (is_resource($this->image)) {
+			return true;
+		}
+		return PHP_VERSION_ID >= 80000 && is_object($this->image) && ($this->image instanceof \GdImage);
 	}
 
 	public function resize($width = 0, $height = 0, $default = '') {
@@ -92,7 +112,7 @@ class Image {
 			$scale = min($scale_w, $scale_h);
 		}
 
-		if ($scale == 1 && $scale_h == $scale_w && $this->mime != 'image/png') {
+		if ($scale == 1 && $scale_h == $scale_w && $this->mime != 'image/png' && $this->mime != 'image/webp') {
 			return;
 		}
 
@@ -104,7 +124,7 @@ class Image {
 		$image_old = $this->image;
 		$this->image = imagecreatetruecolor($width, $height);
 
-		if ($this->mime == 'image/png') {
+		if ($this->mime == 'image/png' || $this->mime == 'image/webp') {
 			imagealphablending($this->image, false);
 			imagesavealpha($this->image, true);
 			$background = imagecolorallocatealpha($this->image, 255, 255, 255, 127);
