@@ -44,6 +44,7 @@ Thumbs.db
 vendor/
 
 docs/
-image/storage_new.beldoorss.ru/
-image/cache/
+storage_new.beldoorss.ru/
+system/cache/
 system/storage/
+image/
