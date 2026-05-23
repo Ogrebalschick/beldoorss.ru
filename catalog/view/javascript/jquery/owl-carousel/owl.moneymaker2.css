@@ -262,7 +262,8 @@ span.arrow-left, span.arrow-right {
     margin-bottom: 0px;
 }
 .owl-moneymaker2-products .product-layout.product-grid {
-    width: 100% !important;
+    /* width: 100% !important; */
+    width: 100%;
 }
 .owl-prev:hover span.arrow-left, .owl-next:hover span.arrow-right {
     border-color: #333;

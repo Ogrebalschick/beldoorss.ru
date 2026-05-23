@@ -921,173 +921,230 @@
                     <hr>
                 </div>
                 
-                <?php if ($products) { ?>
+                <?php if ($products) : ?>
                     <div class="h2 text-center text_related">
                         <div class="h2 text-center text_related">
-                            <?php echo $text_related; ?>
+                        <?php echo $text_related; ?>
                         </div>
                         <div class="row related_carousel">
-                            <?php if ($moneymaker2_product_related_carousel) { ?>
+                        <?php if ($moneymaker2_product_related_carousel) : ?>
                             <div class="owl-carousel owl-moneymaker2 owl-moneymaker2-products owl-moneymaker2-products-related">
-                                <?php } ?>
-                                <?php foreach ($products as $key => $product) { ?>
-                                <div class="product-layout product-grid">
-                                    <div class="product-thumb">
-                                        <div class="image">
-                                            <?php if ($product['stickers']) { ?>
-                                            <div class="stickers">
-                                                <?php foreach ($product['stickers'] as $sticker) { ?>
-                                                <div class="sticker text-left sticker-<?php echo $sticker['type']; ?>">
-                                                    <span class="fa-stack fa-<?php echo $moneymaker2_stickers_size_catalog; ?>"
-                                                        <?php if (!$moneymaker2_stickers_mode) { ?>data-toggle="tooltip"
-                                                        data-placement="right" title="
-                                                        <?php echo strip_tags($sticker['caption']); ?>"
-                                                        <?php } ?>>
-                                                        <i class="fa fa-circle fa-stack-2x"></i>
-                                                        <i class="fa fa-<?php echo $sticker['icon']; ?> fa-stack-1x fa-inverse"></i>
-                                                    </span>
-                                                    <?php if ($moneymaker2_stickers_mode) { ?>
-                                                    <div class="tooltip right in">
-                                                        <div class="tooltip-arrow"></div>
-                                                        <div class="tooltip-inner">
-                                                            <?php echo $sticker['caption']; ?>
-                                                        </div>
-                                                    </div>
-                                                    <?php } ?>
-                                                </div>
-                                                <?php } ?>
+                        <?php endif; ?>
+
+                        <?php foreach ($products as $key => $product) : ?>
+                            <div class="product-layout product-grid">
+                            <div class="product-card-169" data-product-id="<?php echo $product['product_id']; ?>">
+
+                                <!-- БЛОК ИЗОБРАЖЕНИЯ -->
+                                <div class="product-card-169__image-container">
+                                <div class="product-card-169__image-wrapper"
+                                    data-additional-images='<?php echo isset($product['additional_images']) ? json_encode($product['additional_images']) : '[]'; ?>'>
+                                    <a href="<?php echo $product['href']; ?>" class="product-card-169__image-link">
+                                    <img src="<?php echo $product['thumb']; ?>"
+                                        data-original="<?php echo $product['thumb']; ?>"
+                                        alt="<?php echo $product['name']; ?>"
+                                        class="product-card-169__main-image img-responsive" />
+                                    </a>
+                                </div>
+
+                                <!-- СТИКЕРЫ (moneymaker2) -->
+                                <?php if ($product['stickers']) : ?>
+                                    <div class="product-card-169__stickers">
+                                    <?php foreach ($product['stickers'] as $sticker) : ?>
+                                        <div class="product-card-169__sticker product-card-169__sticker--<?php echo $sticker['type']; ?>">
+                                        <span class="fa-stack fa-<?php echo $moneymaker2_stickers_size_catalog; ?>"
+                                                <?php if (!$moneymaker2_stickers_mode) : ?>data-toggle="tooltip" data-placement="right" title="<?php echo strip_tags($sticker['caption']); ?>"<?php endif; ?>>
+                                            <i class="fa fa-circle fa-stack-2x"></i>
+                                            <i class="fa fa-<?php echo $sticker['icon']; ?> fa-stack-1x fa-inverse"></i>
+                                        </span>
+                                        <?php if ($moneymaker2_stickers_mode) : ?>
+                                            <div class="tooltip right in">
+                                            <div class="tooltip-arrow"></div>
+                                            <div class="tooltip-inner"><?php echo $sticker['caption']; ?></div>
                                             </div>
-                                            <?php } ?>
-                                            <?php if ($product['rating']) { ?>
-                                            <div class="rating">
-                                                <?php for ($i = 5; $i >= 1; $i--) { ?>
-                                                <?php if ($product['rating'] < $i) { ?>
-                                                <i class="fa fa-star"></i>
-                                                <?php } else { ?>
-                                                <i class="fa fa-star active"></i>
-                                                <?php } ?>
-                                                <?php } ?>
-                                            </div>
-                                            <?php } ?>
-                                            <a href="<?php echo $product['href']; ?>"><img src="<?php echo $product['thumb']; ?>"
-                                                    alt="<?php echo $product['name']; ?>" title="<?php echo $product['name']; ?>"
-                                                    class="img-responsive" /></a>
+                                        <?php endif; ?>
                                         </div>
-                                        <div>
-                                            <div class="caption">
-                                                <a href="<?php echo $product['href']; ?>" <?php if ($product['special']) { ?>
-                                                    class="text-special"
-                                                    <?php } ?>>
-                                                    <?php echo $product['name']; ?>
-                                                </a>
-                                            </div>
-                                            <?php if ($moneymaker2_common_price_detached) { ?>
-                                            <div class="price-detached"><small>
-                                                    <?php if ($product['price']) { ?><span class="price text-muted">
-                                                        <?php if (!$product['special']) { ?>
-                                                        <?php echo $product['price']; ?>
-                                                        <?php } else { ?><span class="price-new"><b>
-                                                                <?php echo $product['special']; ?>
-                                                            </b></span> <span class="price-old">
-                                                            <?php echo $product['price']; ?>
-                                                        </span>
-                                                        <?php } ?>
-                                                    </span>
-                                                    <?php } ?>
-                                                    <?php if ($product['tax']) { ?><br /><span class="price-tax text-muted">
-                                                        <?php echo $text_tax; ?>
-                                                        <?php echo $product['tax']; ?>
-                                                    </span>
-                                                    <?php } ?>
-                                                </small></div>
-                                            <?php } ?>
-                                            <div class="btn-group btn-group-sm">
-                                                <?php if (!$moneymaker2_common_buy_hide) { ?>
-                                                <button type="button" data-toggle="tooltip" data-html="true" data-placement="bottom"
-                                                    title="<?php echo $product['addtocart_tooltip']; ?>"
-                                                    class="<?php echo $product['addtocart_class']; ?>" <?php if (!$product['sold'])
-                                                    { ?>onclick="cart.add('
-                                                    <?php echo $product['product_id']; ?>', '
-                                                    <?php echo $product['minimum']; ?>');"
-                                                    <?php } ?>><i class="fa fa-fw fa-shopping-cart"></i>
-                                                    <?php if (!$moneymaker2_common_price_detached&&$product['price']) { ?><span
-                                                        class="price">
-                                                        <?php if (!$product['special']) { ?>
-                                                        <?php echo $product['price']; ?>
-                                                        <?php } else { ?><span class="price-new">
-                                                            <?php echo $product['special']; ?>
-                                                        </span>
-                                                        <?php } ?>
-                                                    </span>
-                                                    <?php } else { ?>
-                                                    <?php echo $button_cart; ?>
-                                                    <?php } ?>
-                                                </button>
-                                                <?php } ?>
-                                                <?php if ($moneymaker2_modules_quickorder_enabled&&$moneymaker2_modules_quickorder_display_catalog) { ?>
-                                                <div class="<?php echo $product['quickorder_class']; ?>" <?php if
-                                                    (!$product['sold']) { ?>data-toggle="modal" data-target="#orderModal"
-                                                    data-order-mode="catalog" data-order-product-id="
-                                                    <?php echo $product['product_id']; ?>" data-order-title="
-                                                    <?php echo $product['name']; ?>" data-order-img-src="
-                                                    <?php echo $product['thumb']; ?>" data-order-price="
-                                                    <?php if (!$product['special']) { ?>
-                                                    <?php echo $product['price']; ?>
-                                                    <?php } else { ?>
-                                                    <?php echo $product['special']; ?>
-                                                    <?php } ?>"
-                                                    <?php } ?>><span data-toggle="tooltip" data-html="true" data-placement="bottom"
-                                                        title="<?php echo $product['quickorder_tooltip']; ?>"><i
-                                                            class="fa fa-fw fa-send"></i></span>
-                                                </div>
-                                                <?php } ?>
-                                                <?php if (!$moneymaker2_common_wishlist_hide) { ?><button type="button"
-                                                    class="btn btn-default" <?php if (!$moneymaker2_common_wishlist_caption) {
-                                                    ?>data-toggle="tooltip" data-placement="bottom"
-                                                    <?php } ?>title="
-                                                    <?php echo $button_wishlist; ?>" onclick="wishlist.add('
-                                                    <?php echo $product['product_id']; ?>');"><i class="fa fa-fw fa-heart"></i>
-                                                    <?php if ($moneymaker2_common_wishlist_caption) { ?>
-                                                    <?php echo $button_wishlist; ?>
-                                                    <?php } ?>
-                                                </button>
-                                                <?php } ?>
-                                                <?php if (!$moneymaker2_common_compare_hide) { ?><button type="button"
-                                                    class="btn btn-default" <?php if (!$moneymaker2_common_compare_caption) {
-                                                    ?>data-toggle="tooltip" data-placement="bottom"
-                                                    <?php } ?>title="
-                                                    <?php echo $button_compare; ?>" onclick="compare.add('
-                                                    <?php echo $product['product_id']; ?>');"><i class="fa fa-fw fa-area-chart"></i>
-                                                    <?php if ($moneymaker2_common_compare_caption) { ?>
-                                                    <?php echo $button_compare; ?>
-                                                    <?php } ?>
-                                                </button>
-                                                <?php } ?>
-                                            </div>
-                                            <?php if (!$moneymaker2_common_price_detached&&$product['price']&&$product['tax']) { ?>
-                                            <div class="price-tax"><small class="text-muted">
-                                                    <?php echo $text_tax; ?>
-                                                    <?php echo $product['tax']; ?>
-                                                </small></div>
-                                            <?php } ?>
-                                            <div class="additional">
-                                                <?php echo $product['stock']; ?>
-                                                <?php echo $product['code']; ?>
-                                            </div>
-                                            <div class="description">
-                                                <?php echo $product['description']; ?>
-                                            </div>
+                                    <?php endforeach; ?>
+                                    </div>
+                                <?php endif; ?>
+
+                                <!-- КНОПКИ ДЕЙСТВИЙ (wishlist, compare) из moneymaker2 -->
+                                <div class="product-card-169__actions">
+                                    <?php if (!$moneymaker2_common_wishlist_hide) : ?>
+                                    <button type="button" class="product-card-169__action-btn"
+                                            <?php if (!$moneymaker2_common_wishlist_caption) : ?>data-toggle="tooltip" data-placement="bottom"<?php endif; ?>
+                                            title="<?php echo $button_wishlist; ?>"
+                                            onclick="wishlist.add('<?php echo $product['product_id']; ?>');">
+                                        <i class="fa fa-heart-o"></i>
+                                        <?php if ($moneymaker2_common_wishlist_caption) : ?>
+                                        <span><?php echo $button_wishlist; ?></span>
+                                        <?php endif; ?>
+                                    </button>
+                                    <?php endif; ?>
+                                    <?php if (!$moneymaker2_common_compare_hide) : ?>
+                                    <button type="button" class="product-card-169__action-btn"
+                                            <?php if (!$moneymaker2_common_compare_caption) : ?>data-toggle="tooltip" data-placement="bottom"<?php endif; ?>
+                                            title="<?php echo $button_compare; ?>"
+                                            onclick="compare.add('<?php echo $product['product_id']; ?>');">
+                                        <i class="fa fa-bar-chart-o"></i>
+                                        <?php if ($moneymaker2_common_compare_caption) : ?>
+                                        <span><?php echo $button_compare; ?></span>
+                                        <?php endif; ?>
+                                    </button>
+                                    <?php endif; ?>
+                                </div>
+                                </div>
+
+                                <!-- ИНФОРМАЦИЯ О ТОВАРЕ -->
+                                <div class="product-card-169__info">
+                                <!-- Рейтинг (moneymaker2) -->
+                                <?php if ($product['rating']) : ?>
+                                    <div class="product-card-169__rating">
+                                    <div class="product-card-169__stars">
+                                        <?php for ($i = 5; $i >= 1; $i--) : ?>
+                                        <?php if ($product['rating'] < $i) : ?>
+                                            <i class="fa fa-star"></i>
+                                        <?php else : ?>
+                                            <i class="fa fa-star active"></i>
+                                        <?php endif; ?>
+                                        <?php endfor; ?>
+                                    </div>
+                                    <span class="product-card-169__rating-value"><?php echo $product['rating']; ?>.0</span>
+                                    <span class="product-card-169__reviews">(<?php echo isset($product['reviews']) ? $product['reviews'] : '0'; ?>)</span>
+                                    </div>
+                                <?php endif; ?>
+
+                                <!-- Название -->
+                                <div class="product-card-169__title">
+                                    <a href="<?php echo $product['href']; ?>" class="product-card-169__title-link <?php if ($product['special']) echo 'text-special'; ?>" title="<?php echo $product['name']; ?>">
+                                    <?php echo $product['name']; ?>
+                                    </a>
+                                </div>
+
+                                <!-- Цветовые свитчи (если есть) -->
+                                <?php if (isset($product['colors']) && !empty($product['colors'])) : ?>
+                                    <div class="product-card-169__colors">
+                                    <span class="product-card-169__colors-label">Цвет:</span>
+                                    <div class="product-card-169__colors-list">
+                                        <?php foreach ($product['colors'] as $color) : ?>
+                                        <div class="product-card-169__color-swatch"
+                                            title="<?php echo $color['name']; ?>"
+                                            style="<?php echo isset($color['image']) ? 'background-image: url(' . $color['image'] . ');' : (isset($color['color_code']) ? 'background-color: ' . strtolower($color['color_code']) . ';' : ''); ?>">
                                         </div>
+                                        <?php endforeach; ?>
+                                    </div>
+                                    </div>
+                                <?php endif; ?>
+
+                                <!-- Цена (с поддержкой detached-режима moneymaker2) -->
+                                <div class="product-card-169__price">
+                                    <?php if ($product['price']) : ?>
+                                    <?php if ($product['special']) : ?>
+                                        <span class="product-card-169__price-old"><?php echo $product['price']; ?></span>
+                                        <span class="product-card-169__price-new"><?php echo $product['special']; ?></span>
+                                    <?php else : ?>
+                                        <span class="product-card-169__price-current"><?php echo $product['price']; ?></span>
+                                    <?php endif; ?>
+                                    <?php endif; ?>
+                                </div>
+
+                                <!-- Если цена оторвана (detached) – дополнительный блок с налогом -->
+                                <?php if ($moneymaker2_common_price_detached && $product['tax']) : ?>
+                                    <div class="product-card-169__tax"><?php echo $text_tax; ?> <?php echo $product['tax']; ?></div>
+                                <?php endif; ?>
+
+                                <!-- КНОПКИ: корзина + быстрый заказ (moneymaker2) -->
+                                <div class="product-card-169__buttons">
+                                    <?php if (!$moneymaker2_common_buy_hide) : ?>
+                                    <button type="button" class="product-card-169__cart-btn <?php echo $product['addtocart_class']; ?>"
+                                            data-toggle="tooltip" data-html="true" data-placement="bottom"
+                                            title="<?php echo $product['addtocart_tooltip']; ?>"
+                                            <?php if (!$product['sold']) : ?>onclick="cart.add('<?php echo $product['product_id']; ?>', '<?php echo $product['minimum']; ?>');"<?php endif; ?>>
+                                        <i class="fa fa-shopping-cart"></i>
+                                        <?php if (!$moneymaker2_common_price_detached && $product['price']) : ?>
+                                        <span class="price">
+                                            <?php if (!$product['special']) : ?>
+                                            <?php echo $product['price']; ?>
+                                            <?php else : ?>
+                                            <span class="price-new"><?php echo $product['special']; ?></span>
+                                            <?php endif; ?>
+                                        </span>
+                                        <?php else : ?>
+                                        <span><?php echo $button_cart; ?></span>
+                                        <?php endif; ?>
+                                    </button>
+                                    <?php endif; ?>
+
+                                    <?php if ($moneymaker2_modules_quickorder_enabled && $moneymaker2_modules_quickorder_display_catalog) : ?>
+                                    <button type="button" class="product-card-169__quickorder-btn <?php echo $product['quickorder_class']; ?>"
+                                            <?php if (!$product['sold']) : ?>data-toggle="modal" data-target="#orderModal"
+                                            data-order-mode="catalog" data-order-product-id="<?php echo $product['product_id']; ?>"
+                                            data-order-title="<?php echo $product['name']; ?>"
+                                            data-order-img-src="<?php echo $product['thumb']; ?>"
+                                            data-order-price="<?php echo !$product['special'] ? $product['price'] : $product['special']; ?>"<?php endif; ?>>
+                                        <i class="fa fa-send"></i>
+                                        <span data-toggle="tooltip" data-html="true" data-placement="bottom" title="<?php echo $product['quickorder_tooltip']; ?>">
+                                        <?php echo $button_quickorder; ?>
+                                        </span>
+                                    </button>
+                                    <?php endif; ?>
+                                </div>
+                                </div>
+
+                                <!-- HOVER-БЛОК С ХАРАКТЕРИСТИКАМИ -->
+                                <div class="product-card-169__hover-info">
+                                <div class="product-card-169__hover-inner">
+                                    <div class="product-card-169__attrs">
+                                    <?php if (isset($product['attributes']) && !empty($product['attributes'])) : ?>
+                                        <?php foreach ($product['attributes'] as $attr_name => $attr_value) : ?>
+                                        <div class="product-card-169__attr-item">
+                                            <span class="product-card-169__attr-name"><?php echo $attr_name; ?>:</span>
+                                            <span class="product-card-169__attr-value"><?php echo $attr_value; ?></span>
+                                        </div>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+
+                                    <?php if (isset($product['sku']) && $product['sku']) : ?>
+                                        <div class="product-card-169__attr-item">
+                                        <span class="product-card-169__attr-name">Артикул:</span>
+                                        <span class="product-card-169__attr-value"><?php echo $product['sku']; ?></span>
+                                        </div>
+                                    <?php endif; ?>
+
+                                    <div class="product-card-169__attr-item">
+                                        <span class="product-card-169__attr-name">Наличие:</span>
+                                        <span class="product-card-169__attr-value product-card-169__stock-<?php echo (isset($product['quantity']) && $product['quantity'] > 0) ? 'in' : 'out'; ?>">
+                                        <?php echo (isset($product['quantity']) && $product['quantity'] > 0) ? 'В наличии' : 'Нет в наличии'; ?>
+                                        </span>
+                                    </div>
+
+                                    <!-- Дополнительная информация: stock, code, description (как в оригинале) -->
+                                    <?php if ($product['stock'] || $product['code']) : ?>
+                                        <div class="product-card-169__attr-item">
+                                        <span class="product-card-169__attr-name">Доп.:</span>
+                                        <span class="product-card-169__attr-value"><?php echo $product['stock']; ?> <?php echo $product['code']; ?></span>
+                                        </div>
+                                    <?php endif; ?>
+                                    <?php if ($product['description']) : ?>
+                                        <div class="product-card-169__attr-item product-card-169__attr-item--full">
+                                        <span class="product-card-169__attr-value"><?php echo $product['description']; ?></span>
+                                        </div>
+                                    <?php endif; ?>
                                     </div>
                                 </div>
-                                <?php } ?>
-                                <?php if ($moneymaker2_product_related_carousel) { ?>
-                            </div>
-                            <?php } ?>
-                        </div>
+                                </div>
+
+                            </div> <!-- /.product-card-169 -->
+                            </div> <!-- /.product-layout -->
+                        <?php endforeach; ?>
+
+                        <?php if ($moneymaker2_product_related_carousel) : ?>
+                            </div> <!-- /.owl-carousel -->
+                        <?php endif; ?>
+                        </div> <!-- /.related_carousel -->
                     </div>
                     <hr>
-                <?php } ?>
+                <?php endif; ?>
                 <?php echo $content_bottom; ?>
                 <?php echo $column_right; ?>
             </div>
