@@ -75,6 +75,11 @@ class Image {
 			} elseif ($extension == 'gif') {
 				imagegif($this->image, $file);
 			} elseif ($extension == 'webp' && function_exists('imagewebp')) {
+				// Преобразуем палитровое изображение в полноцветное (исправляет ошибку "Paletter image not supported by webp")
+				if (!imageistruecolor($this->image)) {
+					imagepalettetotruecolor($this->image);
+					imagesavealpha($this->image, true);
+				}
 				imagewebp($this->image, $file, 85);
 			}
 

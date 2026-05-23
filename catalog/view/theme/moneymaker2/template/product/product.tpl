@@ -43,9 +43,9 @@
                 <div class="product__inner">
                     <h1 class="product__title" itemprop="name">
                         <?php if ($moneymaker2_product_metatitles_enabled) { ?>
-                        <?php echo $meta_title; ?>
-                        <?php } else { ?>
                         <?php echo $heading_title; ?>
+                        <?php } else { ?>
+                        <?php echo $meta_title; ?>
                         <?php } ?>
                     </h1>
                     <div class="row product__main">
@@ -1450,4 +1450,31 @@ if (inputElements.length > 0) {
     inputElements[0].checked = true;
 }
 </script>
+<?php if (!empty($breadcrumbs)) { ?>
+<?php
+$breadcrumb_ld = array(
+  '@context' => 'https://schema.org',
+  '@type' => 'BreadcrumbList',
+  'itemListElement' => array()
+);
+$breadcrumb_pos = 1;
+foreach ($breadcrumbs as $crumb) {
+  $item_url = isset($crumb['href']) ? $crumb['href'] : '';
+  if ($item_url === '' && $breadcrumb_pos === count($breadcrumbs) && !empty($_SERVER['HTTP_HOST'])) {
+    $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $item_url = $scheme . '://' . $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
+  }
+  $crumb_name = isset($crumb['text']) ? strip_tags($crumb['text']) : '';
+  $crumb_name = html_entity_decode($crumb_name, ENT_QUOTES, 'UTF-8');
+  $breadcrumb_ld['itemListElement'][] = array(
+    '@type' => 'ListItem',
+    'position' => $breadcrumb_pos,
+    'name' => $crumb_name,
+    'item' => $item_url
+  );
+  $breadcrumb_pos++;
+}
+?>
+<script type="application/ld+json"><?php echo json_encode($breadcrumb_ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG); ?></script>
+<?php } ?>
 <?php echo $footer; ?>
