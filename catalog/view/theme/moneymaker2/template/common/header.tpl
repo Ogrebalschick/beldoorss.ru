@@ -320,61 +320,132 @@
                                 </ul>
                             </div>
                           </div>
-                        <?php if (!$moneymaker2_header_categories_menu_hide) { ?>
-                            <div class="header__catalog dropdown<?php if ($moneymaker2_header_categories_menu_mod) { ?> navbar-full-fw<?php } ?> categories-menu">
-                                <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
-                                    <?php echo $moneymaker2_header_categories_menu_caption ? $moneymaker2_header_categories_menu_caption : $text_category; ?>
-                                </a>
-                                <?php if ($categories||$moneymaker2_header_banners) { ?>
-                                    <?php if (!$moneymaker2_header_categories_menu_mod) { ?>
-                                        <ul class="dropdown-menu keep-open">
-                                          <?php foreach ($categories as $key => $category) { ?>
-                                          <li><a href="<?php echo $category['href']; ?>"><?php echo $category['name']; ?></a></li>
-                                          <?php if (!$moneymaker2_header_categories_menu_hidechilds) { ?>
-                                          <?php if ($category['children']) { ?>
-                                          <?php foreach ($category['children'] as $children) { ?>
-                                          <li><a href="<?php echo $children['href']; ?>"><small>- <?php echo $children['name']; ?></small></a></li>
-                                          <?php } ?>
-                                          <?php } ?>
-                                          <?php } ?>
-                                          <?php if (!$moneymaker2_header_categories_menu_hidechilds) { ?>
-                                          <?php if ($key+1 < count($categories)) { ?>
-                                          <li role="separator" class="divider"></li>
-                                          <?php } ?>
-                                          <?php } ?>
-                                          <?php } ?>
-                                        </ul>
-                                    <?php } else { ?>
-                                        <ul class="dropdown-menu keep-open">
-                                          <li>
-                                            <div>
-                                              <div class="row">
-                                                <?php foreach ($header_categories as $key => $category) { ?>
-                                                <ul class="col-sm-<?php echo $moneymaker2_header_categories_menu_columns['sm'][0]; ?> col-md-<?php echo $moneymaker2_header_categories_menu_columns['md'][0]; ?> col-lg-<?php echo $moneymaker2_header_categories_menu_columns['lg'][0]; ?> list-unstyled">
-                                                  <?php if ($category['href']) { ?><li class="text-center"><a href="<?php echo $category['href']; ?>"><?php if (!$moneymaker2_header_categories_menu_hidethumbs&&$category['image']) { ?><div class="hidden-xs"><img class="img-thumbnail" src="<?php echo $category['image']; ?>" alt="<?php echo $category['name']; ?>" /></div><?php } ?><div class="btn btn-<?php if(isset($category['style'])&&$category['style']) { ?><?php echo $category['style']; ?><?php } else { ?>default<?php } ?> btn-block"><?php if ($moneymaker2_common_categories_icons_enabled&&$category['icon']&&$moneymaker2_header_categories_menu_icons) { ?><i class="fa fa-fw fa-<?php echo $category['icon']; ?>"></i><?php } ?> <?php echo $category['name']; ?></div></a></li><?php } ?>
-                                                  <?php if (!$moneymaker2_header_categories_menu_hidechilds) { ?>
-                                                  <?php if ($category['children']) { ?>
-                                                  <?php foreach ($category['children'] as $children) { ?>
-                                                  <li><a class="text-muted" href="<?php echo $children['href']; ?>"><small>&ndash; <?php echo $children['name']; ?></small></a></li>
-                                                  <?php } ?>
-                                                  <?php } ?>
-                                                  <?php } ?>
-                                                  <?php if(isset($category['text'])&&$category['text']) { ?>
-                                                  <li><?php echo $category['text']; ?></li>
-                                                  <?php } ?>
-                                                </ul>
-                                                <?php if (($key+1)%$moneymaker2_header_categories_menu_columns['sm'][1]==0) { ?><div class="clearfix visible-sm"></div><?php } ?>
-                                                <?php if (($key+1)%$moneymaker2_header_categories_menu_columns['md'][1]==0) { ?><div class="clearfix visible-md"></div><?php } ?>
-                                                <?php if (($key+1)%$moneymaker2_header_categories_menu_columns['lg'][1]==0) { ?><div class="clearfix visible-lg"></div><?php } ?>
-                                                <?php } ?>
-                                              </div>
-                                            </div>
-                                          </li>
-                                        </ul>
+                          <?php if (!$moneymaker2_header_categories_menu_hide) { ?>
+<div class="header__catalog dropdown<?php if ($moneymaker2_header_categories_menu_mod) { ?> navbar-full-fw<?php } ?> categories-menu">
+    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
+        <?php echo $moneymaker2_header_categories_menu_caption ? $moneymaker2_header_categories_menu_caption : $text_category; ?>
+    </a>
+    <?php if ($categories || $moneymaker2_header_banners) { ?>
+        <?php if (!$moneymaker2_header_categories_menu_mod) { ?>
+            <!-- Обычный режим (не мега-меню) -->
+            <ul class="dropdown-menu keep-open">
+                <?php foreach ($categories as $key => $category) { ?>
+                    <li>
+                        <a href="<?php echo $category['href']; ?>"><?php echo $category['name']; ?></a>
+                        <?php if (!$moneymaker2_header_categories_menu_hidechilds) { ?>
+                            <?php if ($category['children']) { ?>
+                                <ul class="dropdown-submenu">
+                                    <?php foreach ($category['children'] as $children) { ?>
+                                        <li><a href="<?php echo $children['href']; ?>"><small>- <?php echo $children['name']; ?></small></a></li>
                                     <?php } ?>
+                                </ul>
+                            <?php } ?>
+                            <!-- Вывод SEO-страниц для этой категории -->
+                            <?php if (isset($seo_by_category[$category['category_id']]) && !empty($seo_by_category[$category['category_id']])) { ?>
+                                <?php foreach ($seo_by_category[$category['category_id']] as $seo) { ?>
+                                    <li><a href="<?php echo $seo['href']; ?>"><small>- <?php echo $seo['title']; ?></small></a></li>
                                 <?php } ?>
-                            </div>
+                            <?php } ?>
                         <?php } ?>
+                    </li>
+                    <?php if (!$moneymaker2_header_categories_menu_hidechilds && $key+1 < count($categories)) { ?>
+                        <li role="separator" class="divider"></li>
+                    <?php } ?>
+                <?php } ?>
+            </ul>
+        <?php } else { ?>
+            <!-- Мега-меню (режим с колонками) -->
+            <ul class="dropdown-menu keep-open">
+                <li>
+                    <div>
+                        <div class="row">
+
+                        <?php 
+                        $header_categories_by_name = array();
+                        foreach ($header_categories as $cat) {
+                            $header_categories_by_name[$cat['name']] = $cat['href'];
+                        }
+                         ?>
+                            <?php foreach ($header_categories as $key => $category) { 
+                                // Получаем ID категории по href
+                                $cat_id = isset($category_id_by_href[$category['href']]) ? $category_id_by_href[$category['href']] : 0;
+                            ?>
+                                <ul class="col-sm-<?php echo $moneymaker2_header_categories_menu_columns['sm'][0]; ?> col-md-<?php echo $moneymaker2_header_categories_menu_columns['md'][0]; ?> col-lg-<?php echo $moneymaker2_header_categories_menu_columns['lg'][0]; ?> list-unstyled">
+                                    <?php if ($category['href']) { ?>
+                                        <li class="text-center">
+                                            <a href="<?php echo $category['href']; ?>">
+                                                <?php if (!$moneymaker2_header_categories_menu_hidethumbs && $category['image']) { ?>
+                                                    <div class="hidden-xs"><img class="img-thumbnail" src="<?php echo $category['image']; ?>" alt="<?php echo $category['name']; ?>" /></div>
+                                                <?php } ?>
+                                                <div class="btn btn-<?php echo (isset($category['style']) && $category['style']) ? $category['style'] : 'default'; ?> btn-block">
+                                                    <?php if ($moneymaker2_common_categories_icons_enabled && $category['icon'] && $moneymaker2_header_categories_menu_icons) { ?>
+                                                        <i class="fa fa-fw fa-<?php echo $category['icon']; ?>"></i>
+                                                    <?php } ?>
+                                                    <?php echo $category['name']; ?>
+                                                    
+                                                </div>
+                                            </a>
+                                        </li>
+                                    <?php } ?>
+                                    <?php if (!$moneymaker2_header_categories_menu_hidechilds) { ?>
+                                      <?php if ($category['children']) { ?>
+    <?php foreach ($category['children'] as $child) { ?>
+        <li><a class="text-muted" href="<?php echo $child['href']; ?>"><small>&ndash; <?php echo $child['name']; ?></small></a></li>
+        <?php
+        // Получаем ID подкатегории по последнему сегменту её SEO-пути
+        $child_href = $child['href'];
+        $parsed_url = parse_url($child_href);
+        $child_path = isset($parsed_url['path']) ? trim($parsed_url['path'], '/') : '';
+        $child_seo_key = end(explode('/', $child_path));
+        $child_id = isset($category_seo_urls[$child_seo_key]) ? $category_seo_urls[$child_seo_key] : 0;
+        
+        // Если есть SEO-страницы для этой подкатегории – выводим их
+        if ($child_id > 0 && isset($seo_keywords_by_category[$child_id]) && !empty($seo_keywords_by_category[$child_id])) {
+            foreach ($seo_keywords_by_category[$child_id] as $seo) {
+                $seo_url = rtrim($child['href'], '/') . '/' . $seo['keyword'];
+        ?>
+            <li><a class="text-muted" href="<?php echo $seo_url; ?>" style="padding-left: 20px;"><small>&ndash; <?php echo $seo['title']; ?></small></a></li>
+        <?php
+            }
+        }
+        ?>
+    <?php } ?>
+<?php } ?>
+                                    <?php } ?>
+
+                                    <!-- SEO-страницы для родительской категории (если есть) -->
+                                    <?php
+                                    $parent_href = $category['href'];
+                                    $parsed_url = parse_url($parent_href);
+                                    $parent_path = isset($parsed_url['path']) ? trim($parsed_url['path'], '/') : '';
+                                    $parent_seo_key = explode('/', $parent_path)[0];
+                                    $parent_cat_id = isset($category_seo_urls[$parent_seo_key]) ? $category_seo_urls[$parent_seo_key] : 0;
+                                    if ($parent_cat_id > 0 && isset($seo_keywords_by_category[$parent_cat_id]) && !empty($seo_keywords_by_category[$parent_cat_id])) {
+                                        foreach ($seo_keywords_by_category[$parent_cat_id] as $seo) {
+                                            $seo_url = rtrim($category['href'], '/') . '/' . $seo['keyword'];
+                                    ?>
+                                        <li><a class="text-muted" href="<?php echo $seo_url; ?>"><small>&ndash; <?php echo $seo['title']; ?></small></a></li>
+                                    <?php
+                                        }
+                                    }
+                                    ?>
+
+                                    <?php if (isset($category['text']) && $category['text']) { ?>
+                                        <li><?php echo $category['text']; ?></li>
+                                    <?php } ?>
+                                </ul>
+                                <?php if (($key+1) % $moneymaker2_header_categories_menu_columns['sm'][1] == 0) { ?><div class="clearfix visible-sm"></div><?php } ?>
+                                <?php if (($key+1) % $moneymaker2_header_categories_menu_columns['md'][1] == 0) { ?><div class="clearfix visible-md"></div><?php } ?>
+                                <?php if (($key+1) % $moneymaker2_header_categories_menu_columns['lg'][1] == 0) { ?><div class="clearfix visible-lg"></div><?php } ?>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        <?php } ?>
+    <?php } ?>
+</div>
+<?php } ?>
                         <div id="search" class="navbar-form header__search">
                           <div class="form-group">
                             <ul class="keep-open list-unstyled">

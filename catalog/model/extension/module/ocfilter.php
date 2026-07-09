@@ -2042,4 +2042,12 @@ class ModelExtensionModuleOCFilter extends Model {
 
     return $query->num_rows ? $query->row['total'] : 0;
   }
+
+  // START: Для Мега-Меню
+  public function getPagesByShowInMenu() {
+    $sql = "SELECT p.*, pd.name, (SELECT ua.keyword FROM " . DB_PREFIX . "url_alias ua WHERE ua.`query` = CONCAT('ocfilter_page_id=', p.page_id) LIMIT 1) AS keyword FROM " . DB_PREFIX . "ocfilter_page p LEFT JOIN " . DB_PREFIX . "ocfilter_page_description pd ON (p.page_id = pd.page_id) WHERE p.status = '1' AND p.show_in_menu = '1' AND pd.language_id = '" . (int)$this->config->get('config_language_id') . "' ORDER BY pd.name";
+    $query = $this->db->query($sql);
+    return $query->rows;
+  }
+  // END: Для Мега-Меню
 }

@@ -3,7 +3,7 @@
 class ModelExtensionModuleOCFilterPage extends Model {
   public function addPage($data) {   
     $this->db->query("INSERT INTO " . DB_PREFIX . "ocfilter_page SET category_id = '" . (int)$data['category_id'] . "', dynamic = '" . (int)$data['dynamic'] . "', status = '" . (int)$data['status'] . "', category = '" . (int)$data['category'] . "', module = '" . (int)$data['module'] . "', product = '" . (int)$data['product'] . "', sitemap = '" . (int)$data['sitemap'] . "'");
-
+    $this->db->query("INSERT INTO " . DB_PREFIX . "ocfilter_page SET category_id = '" . (int)$data['category_id'] . "', dynamic = '" . (int)$data['dynamic'] . "', status = '" . (int)$data['status'] . "', category = '" . (int)$data['category'] . "', module = '" . (int)$data['module'] . "', product = '" . (int)$data['product'] . "', sitemap = '" . (int)$data['sitemap'] . "', show_in_menu = '" . (int)(isset($data['show_in_menu']) ? $data['show_in_menu'] : 0) . "'");
     $page_id = $this->db->getLastId();
 
     foreach ($data['page_description'] as $language_id => $value) {
@@ -41,7 +41,7 @@ class ModelExtensionModuleOCFilterPage extends Model {
     foreach ($data['page_description'] as $language_id => $value) {
       $this->db->query("INSERT INTO " . DB_PREFIX . "ocfilter_page_description SET page_id = '" . (int)$page_id . "', language_id = '" . (int)$language_id . "', name = '" . $this->db->escape($value['name']) . "', heading_title = '" . $this->db->escape($value['heading_title']) . "', description_top = '" . $this->db->escape($value['description_top']) . "', description_bottom = '" . $this->db->escape($value['description_bottom']) . "', meta_title = '" . $this->db->escape($value['meta_title']) . "', meta_description = '" . $this->db->escape($value['meta_description']) . "', meta_keyword = '" . $this->db->escape($value['meta_keyword']) . "'");
     }
-
+    $this->db->query("UPDATE " . DB_PREFIX . "ocfilter_page SET dynamic = '" . (int)$data['dynamic'] . "', category_id = '" . (int)$data['category_id'] . "', status = '" . (int)$data['status'] . "', category = '" . (int)$data['category'] . "', module = '" . (int)$data['module'] . "', product = '" . (int)$data['product'] . "', sitemap = '" . (int)$data['sitemap'] . "', show_in_menu = '" . (int)(isset($data['show_in_menu']) ? $data['show_in_menu'] : 0) . "', `params` = '', params_count = '0', `params_key` = '' WHERE page_id = '" . (int)$page_id . "'");
     $this->db->query("DELETE FROM " . DB_PREFIX . "ocfilter_page_to_store WHERE page_id = '" . (int)$page_id . "'");
 
     if (isset($data['page_store'])) {
@@ -163,7 +163,9 @@ class ModelExtensionModuleOCFilterPage extends Model {
     } else {
       $this->db->query("UPDATE " . DB_PREFIX . "ocfilter_page SET `" . $this->db->escape($data['field']) . "` = '" . $this->db->escape($data['value']) . "' WHERE page_id = '" . (int)$page_id . "'");
     }
-
+    if ($data['field'] == 'show_in_menu') {
+      $this->db->query("UPDATE " . DB_PREFIX . "ocfilter_page SET show_in_menu = '" . (int)$data['value'] . "' WHERE page_id = '" . (int)$page_id . "'");
+  }
     $this->ocfilter->cache->key('page', $page_id)->delete();
     
     return true;

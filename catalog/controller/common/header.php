@@ -92,7 +92,14 @@ class ControllerCommonHeader extends Controller {
 		$data['categories'] = array();
 
 		$categories = $this->model_catalog_category->getCategories(0);
-
+// Получаем SEO-ссылки для категорий (ЧПУ)
+$category_seo_urls = array();
+$query = $this->db->query("SELECT `query`, `keyword` FROM " . DB_PREFIX . "url_alias WHERE `query` LIKE 'category_id=%'");
+foreach ($query->rows as $row) {
+    $category_id = str_replace('category_id=', '', $row['query']);
+    $category_seo_urls[$row['keyword']] = (int)$category_id;
+}
+$data['category_seo_urls'] = $category_seo_urls;
 		foreach ($categories as $category) {
 			if ($category['top']) {
 				// Level 2
@@ -117,10 +124,38 @@ class ControllerCommonHeader extends Controller {
 					'name'     => $category['name'],
 					'children' => $children_data,
 					'column'   => $category['column'] ? $category['column'] : 1,
-					'href'     => $this->url->link('product/category', 'path=' . $category['category_id'])
+					'href'     => $this->url->link('product/category', 'path=' . $category['category_id']),
+					'category_id' => $category['category_id']   // <-- добавьте эту строку
 				);
 			}
 		}
+
+	// START: Для Мега-Меню
+$this->load->model('extension/module/ocfilter');
+$seo_pages = $this->model_extension_module_ocfilter->getPagesByShowInMenu();
+
+// Для сопоставления названия категории с её ID (прямой запрос, не зависит от top)
+$category_id_by_name = array();
+$query = $this->db->query("SELECT c.category_id, cd.name FROM " . DB_PREFIX . "category c LEFT JOIN " . DB_PREFIX . "category_description cd ON (c.category_id = cd.category_id) WHERE cd.language_id = '" . (int)$this->config->get('config_language_id') . "'");
+foreach ($query->rows as $row) {
+    $category_id_by_name[$row['name']] = $row['category_id'];
+}
+$data['category_id_by_name'] = $category_id_by_name;
+
+// Массив SEO-страниц с keyword и title, сгруппированных по category_id
+$seo_keywords_by_category = array();
+foreach ($seo_pages as $seo) {
+    $cat_id = $seo['category_id'] ? $seo['category_id'] : 0;
+    if (!isset($seo_keywords_by_category[$cat_id])) {
+        $seo_keywords_by_category[$cat_id] = array();
+    }
+    $seo_keywords_by_category[$cat_id][] = array(
+        'keyword' => $seo['keyword'],
+        'title'   => $seo['name']
+    );
+}
+$data['seo_keywords_by_category'] = $seo_keywords_by_category;
+// END: Для Мега-Меню
 
 		$data['language'] = $this->load->controller('common/language');
 		$data['currency'] = $this->load->controller('common/currency');

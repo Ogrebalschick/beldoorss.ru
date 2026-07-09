@@ -88,6 +88,7 @@ $_['entry_display_module']           = 'Выводить в модуле';
 $_['entry_display_category']           = 'Выводить на странице категории';
 $_['entry_display_product']           = 'Выводить на странице товара';
 $_['entry_display_sitemap']           = 'Выводить в карте сайта';
+$_['entry_show_in_menu'] = 'Выводить в меню'; // Для Мега-Меню
 $_['entry_display_code'] = 'Код вывода в любом месте';
 $_['entry_store']            = 'Магазин';
 $_['entry_layout']           = 'Макет (схема)';

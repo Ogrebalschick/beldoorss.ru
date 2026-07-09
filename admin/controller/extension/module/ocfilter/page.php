@@ -33,6 +33,14 @@ class ControllerExtensionModuleOCFilterPage extends Controller {
     $this->load->model('extension/module/ocfilter/page');
 
     if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+
+      // Добавляем поле show_in_menu
+      if (isset($this->request->post['show_in_menu'])) {
+        $this->request->post['show_in_menu'] = (int)$this->request->post['show_in_menu'];
+      } else {
+        $this->request->post['show_in_menu'] = 0;
+      }
+
       $page_id = $this->model_extension_module_ocfilter_page->addPage($this->preparePageData($this->request->post));
 
       $this->session->data['success'] = $this->language->get('text_success');
@@ -340,6 +348,14 @@ class ControllerExtensionModuleOCFilterPage extends Controller {
     $this->load->model('extension/module/ocfilter/page');
 
     if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validateForm()) {
+
+      // Добавляем поле show_in_menu
+      if (isset($this->request->post['show_in_menu'])) {
+          $this->request->post['show_in_menu'] = (int)$this->request->post['show_in_menu'];
+      } else {
+          $this->request->post['show_in_menu'] = 0;
+      }
+
       $this->model_extension_module_ocfilter_page->editPage($this->request->get['page_id'], $this->preparePageData($this->request->post));
 
       $this->session->data['success'] = $this->language->get('text_success');
@@ -986,6 +1002,9 @@ class ControllerExtensionModuleOCFilterPage extends Controller {
 
     $data['category_name'] = '';
 
+    $data['show_in_menu'] = $this->ocfilter->admin->getEntityValue('show_in_menu', 0); // Для Мега-Меню 
+
+    
     if ($data['category_id']) {
       $this->load->model('catalog/category');
 

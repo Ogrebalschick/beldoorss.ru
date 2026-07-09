@@ -22,7 +22,14 @@
     <?php $tpl_bool_button('sitemap', $sitemap, 'y/n'); ?>
   </div>
 </div>      
-
+<!-- START: Для Мега-Меню -->
+<div class="form-group">
+  <label class="col-sm-3 control-label"><?php echo $entry_show_in_menu; ?></label>
+  <div class="col-sm-9">
+    <?php $tpl_bool_button('show_in_menu', $show_in_menu, 'y/n'); ?>
+  </div>
+</div>
+<!-- END: Для Мега-Меню -->
 <div class="form-group">
   <label class="col-sm-3 control-label"><?php echo $entry_store; ?>, <?php echo $entry_layout; ?></label>
   <div class="col-sm-5">
