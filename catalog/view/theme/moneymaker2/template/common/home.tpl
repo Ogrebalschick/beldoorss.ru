@@ -41,7 +41,7 @@
                 <meta itemprop="position" content="1">
                 <a href="/vhodnye-dveri/" itemprop="url">
                     <div class="maincategories__img">
-                        <img src="/catalog/view/theme/moneymaker2/image/maincategories/1.png" alt="Входные двери" itemprop="image">
+                        <img src="/catalog/view/theme/moneymaker2/image/maincategories/1.png" alt="Входные двери" itemprop="image" loading="lazy">
                     </div>
                     <p itemprop="name">Входные двери</p>
                 </a>
@@ -50,7 +50,7 @@
                 <meta itemprop="position" content="2">
                 <a href="/mezhkomnatnye-dveri/" itemprop="url">
                     <div class="maincategories__img">
-                        <img src="/catalog/view/theme/moneymaker2/image/maincategories/2.jpg" alt="Межкомнатные двери" itemprop="image">
+                        <img src="/catalog/view/theme/moneymaker2/image/maincategories/2.jpg" alt="Межкомнатные двери" itemprop="image" loading="lazy">
                     </div>
                     <p itemprop="name">Межкомнатные двери</p>
                 </a>
@@ -59,7 +59,7 @@
                 <meta itemprop="position" content="3">
                 <a href="/dvernaya-furnitura/" itemprop="url">
                     <div class="maincategories__img">
-                        <img src="/catalog/view/theme/moneymaker2/image/maincategories/3.png" alt="Дверная фурнитура" itemprop="image" style="height:100%">
+                        <img src="/catalog/view/theme/moneymaker2/image/maincategories/3.png" alt="Дверная фурнитура" itemprop="image" style="height:100%" loading="lazy">
                     </div>
                     <p itemprop="name">Дверная фурнитура</p>
                 </a>
@@ -68,7 +68,7 @@
                 <meta itemprop="position" content="4">
                 <a href="/dostavka" itemprop="url">
                     <div class="maincategories__img">
-                        <img src="/catalog/view/theme/moneymaker2/image/maincategories/4.png" alt="Доставка/Установка/Оплата" itemprop="image">
+                        <img src="/catalog/view/theme/moneymaker2/image/maincategories/4.png" alt="Доставка/Установка/Оплата" itemprop="image" loading="lazy">
                     </div>
                     <p itemprop="name">Доставка/Установка/Оплата</p>
                 </a>
@@ -84,7 +84,7 @@
                         <p>(уличные двери, коттедж)</p>
                     </div>
                     <div class="category-item__img">
-                        <img src="https://beldoorss.ru/image/category/entrance-doors/street-doors.jpg" alt="Уличные двери" itemscope itemprop="image">
+                        <img src="https://beldoorss.ru/image/category/entrance-doors/street-doors.jpg" alt="Уличные двери" itemscope itemprop="image" loading="lazy">
                     </div>
                 </a>
                 <a href="/vhodnye-dveri/vhodnye-dveri-v-kvartiru/" class="category-item category-item__withtext" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
@@ -93,7 +93,7 @@
                         <h2><span itemprop="name">Двери в квартиру</span></h2>
                     </div>
                     <div class="category-item__img">
-                        <img src="https://beldoorss.ru/image/category/entrance-doors/apartment-doors.jpg" alt="Двери в квартиру" itemscope itemprop="image">
+                        <img src="https://beldoorss.ru/image/category/entrance-doors/apartment-doors.jpg" alt="Двери в квартиру" itemscope itemprop="image" loading="lazy">
                     </div>
                 </a>
                 <a href="/dvustvorchatye-dveri/" class="category-item category-item__withtext">
@@ -103,7 +103,7 @@
                         <p>нестандартные</p>
                     </div>
                     <div class="category-item__img"><img
-                            src="https://beldoorss.ru/image/category/entrance-doors/bivalve.jpg" alt="Двухстворчатые двери нестандартные" itemscope itemprop="image"></div>
+                            src="https://beldoorss.ru/image/category/entrance-doors/bivalve.jpg" alt="Двухстворчатые двери нестандартные" itemscope itemprop="image" loading="lazy"></div>
                 </a>
                 <a href="/vhodnye-dveri/vhodnye-dveri-s-umnym-zamkom/" class="category-item category-item__withtext">
                     <meta itemprop="position" content="4">
@@ -112,7 +112,7 @@
                         <p>(умным, электронным)</p>
                     </div>
                     <div class="category-item__img"><img
-                            src="https://beldoorss.ru/image/category/entrance-doors/electric-doors.png" alt="Двери с биометрическим замком(умным, электронным)" itemscope itemprop="image">
+                            src="https://beldoorss.ru/image/category/entrance-doors/electric-doors.png" alt="Двери с биометрическим замком(умным, электронным)" itemscope itemprop="image" loading="lazy">
                     </div>
                 </a>
                 <a href="/vhodnye-dveri/tehnicheskie-dveri/protivopozharnye-dveri/"
@@ -122,7 +122,7 @@
                         <h2><span itemprop="name">Противопожарные,</span><br>Технические двери</h2>
                     </div>
                     <div class="category-item__img"><img
-                            src="https://beldoorss.ru/image/category/entrance-doors/fire-doors.jpg" alt="Противопожарные, Технические двери" itemscope itemprop="image"></div>
+                            src="https://beldoorss.ru/image/category/entrance-doors/fire-doors.jpg" alt="Противопожарные, Технические двери" itemscope itemprop="image" loading="lazy"></div>
                 </a>
             </div>
             <div class="maincategories__opened-item mejrooms-doors__opened">
@@ -132,7 +132,7 @@
                         <h2><span itemprop="name">Специальные</span></h2>
                     </div>
                     <div class="category-item__img"><img
-                            src="https://beldoorss.ru/image/category/interior-doors/special-doors.jpg" alt="Специальные" itemscope itemprop="image"></div>
+                            src="https://beldoorss.ru/image/category/interior-doors/special-doors.jpg" alt="Специальные" itemscope itemprop="image" loading="lazy"></div>
                 </a>
                 <a href="/dekor-stenovye-paneli/" class="category-item category-item__withtext">
                     <meta itemprop="position" content="7">
@@ -140,7 +140,7 @@
                         <h2><span itemprop="name">Декор. <br>Стеновые панели</span></h2>
                     </div>
                     <div class="category-item__img"><img
-                            src="https://beldoorss.ru/image/category/interior-doors/decor-wall-panels.jpg" alt="Декор. Стеновые панели" itemscope itemprop="image">
+                            src="https://beldoorss.ru/image/category/interior-doors/decor-wall-panels.jpg" alt="Декор. Стеновые панели" itemscope itemprop="image" loading="lazy">
                     </div>
                 </a>
                 <a href="/mezhkomnatnye-peregorodki/" class="category-item category-item__withtext">
@@ -149,7 +149,7 @@
                         <h2><span itemprop="name">Межкомнатные <br>перегородки</span></h2>
                     </div>
                     <div class="category-item__img"><img
-                            src="https://beldoorss.ru/image/category/interior-doors/interior-partitions.jpg" alt="Межкомнатные перегородки" itemscope itemprop="image">
+                            src="https://beldoorss.ru/image/category/interior-doors/interior-partitions.jpg" alt="Межкомнатные перегородки" itemscope itemprop="image" loading="lazy">
                     </div>
                 </a>
             </div>
@@ -161,7 +161,7 @@
                         <h2>Дверные <span>ручки</span></h2>
                     </div>
                     <div class="category-item__img"><img
-                            src="https://beldoorss.ru/image/category/fittings/door-handles.png" alt="Дверные ручки" itemscope itemprop="image"></div>
+                            src="https://beldoorss.ru/image/category/fittings/door-handles.png" alt="Дверные ручки" itemscope itemprop="image" loading="lazy"></div>
                 </a>
                 <a href="/dvernye-zamki/" class="category-item category-item__withtext">
                     <meta itemprop="position" content="10">
@@ -169,7 +169,7 @@
                         <h2>Дверные <span>замки</span></h2>
                     </div>
                     <div class="category-item__img"><img
-                            src="https://beldoorss.ru/image/category/fittings/locks-and-latches.png" alt="Дверные замки" itemscope itemprop="image"></div>
+                            src="https://beldoorss.ru/image/category/fittings/locks-and-latches.png" alt="Дверные замки" itemscope itemprop="image" loading="lazy"></div>
                 </a>
                 <a href="/dvernye-petli/" class="category-item category-item__withtext">
                     <meta itemprop="position" content="11">
@@ -177,7 +177,7 @@
                         <h2>Дверные <span>петли</span></h2>
                     </div>
                     <div class="category-item__img"><img
-                            src="https://beldoorss.ru/image/category/fittings/door-hinges.png" alt="Дверные петли" itemscope itemprop="image"></div>
+                            src="https://beldoorss.ru/image/category/fittings/door-hinges.png" alt="Дверные петли" itemscope itemprop="image" loading="lazy"></div>
                 </a>
                 <a href="/fiksatory-i-nakladki/" class="category-item category-item__withtext">
                     <meta itemprop="position" content="12">
@@ -185,7 +185,7 @@
                         <h2><span itemprop="name">Скобляные изделия</span></h2>
                     </div>
                     <div class="category-item__img"><img
-                            src="https://beldoorss.ru/image/category/fittings/hardware.png" alt="Скобляные изделия" itemscope itemprop="image"></div>
+                            src="https://beldoorss.ru/image/category/fittings/hardware.png" alt="Скобляные изделия" itemscope itemprop="image" loading="lazy"></div>
                 </a>
             </div>
         </div>

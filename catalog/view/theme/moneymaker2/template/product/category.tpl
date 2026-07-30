@@ -143,11 +143,19 @@
                   <div class="product-card-169__image-container">
                     <div class="product-card-169__image-wrapper" data-additional-images='<?php echo json_encode($product['additional_images']); ?>'>
                       <a href="<?php echo $product['href']; ?>" class="product-card-169__image-link">
+                        <?php
+                        // Плейсхолдер для ленивой загрузки
+                        $placeholder = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+                        // Для первых 8 товаров ставим реальное изображение сразу, для остальных – плейсхолдер
+                        $imageSrc = ($indexOfProduct < 8) ? $product['thumb'] : $placeholder;
+                        // Добавляем класс lazy для всех, кроме первых 8 (у них src уже реальный, lazy не нужен)
+                        $lazyClass = ($indexOfProduct < 8) ? '' : ' lazy';
+                        ?>
                         <img
                           src="<?php echo $product['thumb']; ?>"
-                          data-original="<?php echo $product['thumb']; ?>"
                           alt="<?php echo $product['name']; ?>"
-                          class="product-card-169__main-image img-responsive" />
+                          class="product-card-169__main-image img-responsive"
+                          <?php if ($indexOfProduct >= 8) echo 'loading="lazy"'; ?> />
                       </a>
                     </div>
 
@@ -341,23 +349,19 @@
       });
     </script>
     <script>
-      // image-switcher.js - исправленная версия
+      // image-switcher.js - с ленивой загрузкой дополнительных изображений
       (function($) {
         $(document).ready(function() {
 
-          // Определяем touch-устройство
           const isTouchDevice = 'ontouchstart' in window || navigator.msMaxTouchPoints;
 
-          // Функция для генерации индикаторов
+          // Функция для создания индикаторов
           function createIndicator($wrapper, imageCount) {
             $wrapper.find('.product-card-169__indicators').remove();
-
             const $indicators = $('<div class="product-card-169__indicators"></div>');
-
             for (let i = 0; i < imageCount; i++) {
               const $dot = $('<div class="product-card-169__indicator"></div>');
               $dot.data('index', i);
-
               if (isTouchDevice) {
                 $dot.on('click', function(e) {
                   e.stopPropagation();
@@ -366,140 +370,111 @@
                   switchToImage($wrapper, index);
                 });
               }
-
               $indicators.append($dot);
             }
-
             $wrapper.append($indicators);
             return $indicators;
           }
 
-          // Функция для обновления активного индикатора
+          // Функция обновления индикаторов
           function updateActiveIndicator($wrapper, activeIndex) {
             const $indicators = $wrapper.find('.product-card-169__indicators');
             if ($indicators.length === 0) return;
-
             $indicators.find('.product-card-169__indicator').each(function(index, el) {
-              if (index === activeIndex) {
-                $(el).addClass('active');
-              } else {
-                $(el).removeClass('active');
-              }
+              $(el).toggleClass('active', index === activeIndex);
             });
           }
 
-          // Функция для обновления счетчика
-          function updateCounter($wrapper, currentIndex, totalCount) {
-            // let $counter = $wrapper.find('.product-card-169__counter');
-
-            // if ($counter.length === 0) {
-            //     $counter = $('<div class="product-card-169__counter"></div>');
-            //     $wrapper.append($counter);
-            // }
-
-            // $counter.text((currentIndex + 1) + ' / ' + totalCount);
-          }
-
-          // Функция переключения на конкретное изображение
+          // Функция переключения на изображение с индексом newIndex
           function switchToImage($wrapper, newIndex) {
-            const $img = $wrapper.find('.product-card-169__main-image');
             const images = $wrapper.data('images-array');
-
             if (!images || !images.length) return;
 
-            newIndex = Math.min(newIndex, images.length - 1);
-            newIndex = Math.max(newIndex, 0);
-
+            const total = images.length;
+            newIndex = Math.min(Math.max(newIndex, 0), total - 1);
             const currentIndex = $wrapper.data('current-index') || 0;
             if (currentIndex === newIndex) return;
 
-            // Сохраняем новый индекс
+            const $img = $wrapper.find('.product-card-169__main-image');
+            const newSrc = images[newIndex];
+
+            // Если изображение ещё не загружено – загружаем его через Image
+            if (!$wrapper.data('loaded-images')) {
+              $wrapper.data('loaded-images', {});
+            }
+            const loaded = $wrapper.data('loaded-images');
+            if (!loaded[newIndex]) {
+              const tempImg = new Image();
+              tempImg.onload = function() {
+                loaded[newIndex] = true;
+                $img.attr('src', newSrc);
+              };
+              tempImg.onerror = function() {
+                // если не загрузилось – всё равно ставим src (будет пусто или ошибка)
+                loaded[newIndex] = false;
+                $img.attr('src', newSrc);
+              };
+              tempImg.src = newSrc;
+            } else {
+              // уже загружено – сразу меняем
+              $img.attr('src', newSrc);
+            }
+
             $wrapper.data('current-index', newIndex);
-
-            // Меняем изображение без анимации (быстрее и надежнее)
-            $img.attr('src', images[newIndex]);
-
-            // Обновляем индикаторы и счетчик
             updateActiveIndicator($wrapper, newIndex);
-            updateCounter($wrapper, newIndex, images.length);
           }
 
-          // Функция сброса к главному изображению
+          // Сброс к главному изображению (индекс 0)
           function resetToMainImage($wrapper) {
-            const $img = $wrapper.find('.product-card-169__main-image');
-            const originalSrc = $wrapper.data('original-src');
             const images = $wrapper.data('images-array');
-
-            if (!originalSrc) return;
-
+            if (!images || images.length <= 1) return;
             const currentIndex = $wrapper.data('current-index') || 0;
             if (currentIndex === 0) return;
-
-            // Сбрасываем индекс
-            $wrapper.data('current-index', 0);
-
-            // Меняем изображение
-            $img.attr('src', originalSrc);
-
-            // Обновляем индикаторы и счетчик
-            updateActiveIndicator($wrapper, 0);
-            updateCounter($wrapper, 0, images.length);
+            switchToImage($wrapper, 0);
           }
 
-          // Обрабатываем каждую карточку
+          // Инициализация каждого wrapper'а
           $('.product-card-169__image-wrapper').each(function() {
             const $wrapper = $(this);
             const additionalImages = $wrapper.data('additional-images');
-
             const $img = $wrapper.find('.product-card-169__main-image');
-            const originalSrc = $img.attr('src');
+            const originalSrc = $img.attr('src') || $img.data('original') || '';
 
-            // Сохраняем оригинальный src
-            $wrapper.data('original-src', originalSrc);
-
-            // Формируем массив изображений
+            // Формируем массив всех изображений (основное + дополнительные)
             let images = [originalSrc];
             if (additionalImages && additionalImages.length > 0) {
               additionalImages.forEach(function(img) {
                 if (img.thumb) images.push(img.thumb);
               });
             }
-
-            // Сохраняем массив изображений
             $wrapper.data('images-array', images);
             $wrapper.data('current-index', 0);
+            $wrapper.data('loaded-images', {
+              0: true
+            }); // первое уже загружено (или нет, но считаем)
 
             const imageCount = images.length;
+            if (imageCount <= 1) return;
 
-            // Если только одно изображение - выходим
-            if (imageCount <= 1) {
-              return;
-            }
-
-            // Создаем индикаторы и счетчик
+            // Создаём индикаторы
             createIndicator($wrapper, imageCount);
-            updateCounter($wrapper, 0, imageCount);
             updateActiveIndicator($wrapper, 0);
 
-            // ===== ДЕСКТОП: движение мыши =====
+            // Десктоп – наведение мыши
             if (!isTouchDevice) {
               let currentHoverIndex = 0;
               let hoverTimeout = null;
 
               $wrapper.on('mousemove', function(e) {
-                // Очищаем таймер сброса
                 if (hoverTimeout) {
                   clearTimeout(hoverTimeout);
                   hoverTimeout = null;
                 }
-
                 const rect = this.getBoundingClientRect();
                 let x = e.clientX - rect.left;
                 let width = rect.width;
-
                 let newIndex = Math.floor((x / width) * imageCount);
-                newIndex = Math.min(newIndex, imageCount - 1);
-                newIndex = Math.max(newIndex, 0);
+                newIndex = Math.min(Math.max(newIndex, 0), imageCount - 1);
 
                 if (newIndex !== currentHoverIndex) {
                   currentHoverIndex = newIndex;
@@ -508,7 +483,6 @@
               });
 
               $wrapper.on('mouseleave', function() {
-                // Устанавливаем таймер для возврата к главному фото
                 hoverTimeout = setTimeout(function() {
                   if (currentHoverIndex !== 0) {
                     currentHoverIndex = 0;
@@ -519,64 +493,33 @@
               });
             }
 
-            // ===== МОБИЛЬНЫЕ: touch-события =====
+            // Мобильные – свайпы
             if (isTouchDevice) {
               let touchStartX = 0;
-              let touchEndX = 0;
               let currentIndex = 0;
-
               $wrapper.on('touchstart', function(e) {
                 touchStartX = e.originalEvent.touches[0].clientX;
                 currentIndex = $wrapper.data('current-index') || 0;
               });
-
               $wrapper.on('touchend', function(e) {
                 if (!touchStartX) return;
-
-                touchEndX = e.originalEvent.changedTouches[0].clientX;
+                const touchEndX = e.originalEvent.changedTouches[0].clientX;
                 const deltaX = touchEndX - touchStartX;
-                const minSwipeDistance = 50;
-
+                const minSwipe = 50;
                 let newIndex = currentIndex;
-
-                if (Math.abs(deltaX) > minSwipeDistance) {
-                  if (deltaX > 0) {
-                    // Свайп вправо - предыдущее
-                    newIndex = Math.max(0, currentIndex - 1);
-                  } else {
-                    // Свайп влево - следующее
-                    newIndex = Math.min(imageCount - 1, currentIndex + 1);
-                  }
+                if (Math.abs(deltaX) > minSwipe) {
+                  if (deltaX > 0) newIndex = Math.max(0, currentIndex - 1);
+                  else newIndex = Math.min(imageCount - 1, currentIndex + 1);
                 }
-
                 if (newIndex !== currentIndex) {
                   switchToImage($wrapper, newIndex);
                 }
-
                 touchStartX = 0;
               });
-
               $wrapper.on('touchcancel', function() {
                 touchStartX = 0;
               });
-
-              // Добавляем класс для мобильных
               $wrapper.addClass('touch-device');
-            }
-          });
-
-          // Прелоад изображений
-          function preloadImages(images) {
-            images.forEach(function(src) {
-              const img = new Image();
-              img.src = src;
-            });
-          }
-
-          $('.product-card-169__image-wrapper').each(function() {
-            const images = $(this).data('images-array');
-            if (images && images.length > 1) {
-              preloadImages(images.slice(1)); // Прелоадим только дополнительные
             }
           });
 
@@ -585,31 +528,33 @@
     </script>
   <?php } ?>
   <?php if (!empty($breadcrumbs)) { ?>
-  <?php
-  $breadcrumb_ld = array(
-    '@context' => 'https://schema.org',
-    '@type' => 'BreadcrumbList',
-    'itemListElement' => array()
-  );
-  $breadcrumb_pos = 1;
-  foreach ($breadcrumbs as $crumb) {
-    $item_url = isset($crumb['href']) ? $crumb['href'] : '';
-    if ($item_url === '' && $breadcrumb_pos === count($breadcrumbs) && !empty($_SERVER['HTTP_HOST'])) {
-      $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-      $item_url = $scheme . '://' . $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
-    }
-    $crumb_name = isset($crumb['text']) ? strip_tags($crumb['text']) : '';
-    $crumb_name = html_entity_decode($crumb_name, ENT_QUOTES, 'UTF-8');
-    $breadcrumb_ld['itemListElement'][] = array(
-      '@type' => 'ListItem',
-      'position' => $breadcrumb_pos,
-      'name' => $crumb_name,
-      'item' => $item_url
+    <?php
+    $breadcrumb_ld = array(
+      '@context' => 'https://schema.org',
+      '@type' => 'BreadcrumbList',
+      'itemListElement' => array()
     );
-    $breadcrumb_pos++;
-  }
-  ?>
-  <script type="application/ld+json"><?php echo json_encode($breadcrumb_ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG); ?></script>
+    $breadcrumb_pos = 1;
+    foreach ($breadcrumbs as $crumb) {
+      $item_url = isset($crumb['href']) ? $crumb['href'] : '';
+      if ($item_url === '' && $breadcrumb_pos === count($breadcrumbs) && !empty($_SERVER['HTTP_HOST'])) {
+        $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+        $item_url = $scheme . '://' . $_SERVER['HTTP_HOST'] . (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '');
+      }
+      $crumb_name = isset($crumb['text']) ? strip_tags($crumb['text']) : '';
+      $crumb_name = html_entity_decode($crumb_name, ENT_QUOTES, 'UTF-8');
+      $breadcrumb_ld['itemListElement'][] = array(
+        '@type' => 'ListItem',
+        'position' => $breadcrumb_pos,
+        'name' => $crumb_name,
+        'item' => $item_url
+      );
+      $breadcrumb_pos++;
+    }
+    ?>
+    <script type="application/ld+json">
+      <?php echo json_encode($breadcrumb_ld, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG); ?>
+    </script>
   <?php } ?>
   <?php echo $footer; ?>
 </div>
