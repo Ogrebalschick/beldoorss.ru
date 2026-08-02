@@ -37,3 +37,96 @@
        url('../fonts/open-sans-v13-latin-ext_latin_cyrillic-700.ttf') format('truetype'), /* Safari, Android, iOS */
        url('../fonts/open-sans-v13-latin-ext_latin_cyrillic-700.svg#OpenSans') format('svg'); /* Legacy iOS */
 }
+
+
+@font-face {
+    font-display: swap;
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 300;
+    src: url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.eot');
+    src: local('Open Sans Light'), local('OpenSans-Light'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.eot?#iefix') format('embedded-opentype'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.woff2') format('woff2'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.woff') format('woff'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.ttf') format('truetype'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.svg#OpenSans') format('svg')
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 400;
+    src: url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.eot');
+    src: local('Open Sans'), local('OpenSans'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.eot?#iefix') format('embedded-opentype'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.woff2') format('woff2'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.woff') format('woff'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.ttf') format('truetype'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.svg#OpenSans') format('svg')
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'Open Sans';
+    font-style: normal;
+    font-weight: 700;
+    src: url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.eot');
+    src: local('Open Sans Bold'), local('OpenSans-Bold'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.eot?#iefix') format('embedded-opentype'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.woff2') format('woff2'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.woff') format('woff'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.ttf') format('truetype'), url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.svg#OpenSans') format('svg')
+}
+
+@font-face {
+    font-display: swap;
+    font-family: 'FontAwesome';
+    font-weight: normal;
+    font-style: normal;
+    src: url('../fonts/fontawesome-webfont.eot?v=4.7.0');
+    src: url('catalog/view/javascript/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'), url('catalog/view/javascript/font-awesome/fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'), url('catalog/view/javascript/font-awesome/fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'), url('catalog/view/javascript/font-awesome/fonts/fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype'), url('catalog/view/javascript/font-awesome/fonts/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg')
+}
+
+
+@font-face {
+    font-family: "gilroy";
+    src: url("/catalog/view/theme/moneymaker2/fonts/Gilroy-Bold.ttf");
+    src: local("gilroy"), local("gilroy"), url("/catalog/view/theme/moneymaker2/fonts/Gilroy-Bold.ttf?#iefix") format("TrueType");
+    font-style: normal;
+    font-weight: 700
+}
+
+@font-face {
+    font-family: "gilroy";
+    src: url("/catalog/view/theme/moneymaker2/fonts/Gilroy-ExtraBold.ttf");
+    src: local("gilroy"), local("gilroy"), url("/catalog/view/theme/moneymaker2/fonts/Gilroy-ExtraBold.ttf?#iefix") format("TrueType");
+    font-style: normal;
+    font-weight: 800
+}
+
+@font-face {
+    font-family: "gilroy";
+    src: url("/catalog/view/theme/moneymaker2/fonts/Gilroy-light.ttf");
+    src: local("gilroy"), local("gilroy"), url("/catalog/view/theme/moneymaker2/fonts/Gilroy-light.ttf?#iefix") format("TrueType");
+    font-style: normal;
+    font-weight: 300
+}
+
+@font-face {
+    font-family: "gilroy";
+    src: url("/catalog/view/theme/moneymaker2/fonts/Gilroy-Medium.ttf");
+    src: local("gilroy"), local("gilroy"), url("/catalog/view/theme/moneymaker2/fonts/Gilroy-Medium.ttf?#iefix") format("TrueType");
+    font-style: normal;
+    font-weight: 500
+}
+
+@font-face {
+    font-family: "gilroy";
+    src: url("/catalog/view/theme/moneymaker2/fonts/Gilroy-Regular.ttf");
+    src: local("gilroy"), local("gilroy"), url("/catalog/view/theme/moneymaker2/fonts/Gilroy-Regular.ttf?#iefix") format("TrueType");
+    font-style: normal;
+    font-weight: 400
+}
+
+@font-face {
+    font-family: "gilroy";
+    src: url("/catalog/view/theme/moneymaker2/fonts/Gilroy-Semibold.ttf");
+    src: local("gilroy"), local("gilroy"), url("/catalog/view/theme/moneymaker2/fonts/Gilroy-Semibold.ttf?#iefix") format("TrueType");
+    font-style: normal;
+    font-weight: 600
+}
+
+@font-face {
+    font-family: "BebasNeue";
+    src: url("/catalog/view/theme/moneymaker2/fonts/Bebas-Neue.ttf");
+    src: local("BebasNeue"), local("BebasNeue"), url("/catalog/view/theme/moneymaker2/fonts/Bebas-Neue.ttf?#iefix") format("TrueType");
+    font-style: normal
+}

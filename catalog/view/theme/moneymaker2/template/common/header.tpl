@@ -19,33 +19,7 @@
 <?php } ?>
 <!-- mmr2 2.7.0 oc2.3 -->
 <style>
-    @font-face{font-display:swap;font-family:'Open Sans';font-style:normal;font-weight:300;src: url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.eot');src: local('Open Sans Light'), local('OpenSans-Light'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.eot?#iefix') format('embedded-opentype'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.woff2') format('woff2'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.woff') format('woff'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.ttf') format('truetype'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-300.svg#OpenSans') format('svg')}@font-face{font-display:swap;font-family:'Open Sans';font-style:normal;font-weight:400;src: url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.eot');src: local('Open Sans'), local('OpenSans'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.eot?#iefix') format('embedded-opentype'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.woff2') format('woff2'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.woff') format('woff'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.ttf') format('truetype'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-regular.svg#OpenSans') format('svg')}@font-face{font-display:swap;font-family:'Open Sans';font-style:normal;font-weight:700;src: url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.eot');src: local('Open Sans Bold'), local('OpenSans-Bold'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.eot?#iefix') format('embedded-opentype'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.woff2') format('woff2'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.woff') format('woff'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.ttf') format('truetype'),url('catalog/view/theme/moneymaker2/fonts/open-sans-v13-latin-ext_latin_cyrillic-700.svg#OpenSans') format('svg')}@font-face{font-display:swap;font-family:'FontAwesome';font-weight:normal;font-style:normal;src: url('../fonts/fontawesome-webfont.eot?v=4.7.0');src: url('catalog/view/javascript/font-awesome/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0') format('embedded-opentype'),url('catalog/view/javascript/font-awesome/fonts/fontawesome-webfont.woff2?v=4.7.0') format('woff2'),url('catalog/view/javascript/font-awesome/fonts/fontawesome-webfont.woff?v=4.7.0') format('woff'),url('catalog/view/javascript/font-awesome/fonts/fonts/fontawesome-webfont.ttf?v=4.7.0') format('truetype'),url('catalog/view/javascript/font-awesome/fonts/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular') format('svg')}
-    @media screen and (max-width:768px){
-  .headerMenu>li{
-    display: grid;
     
-}
-
-.headerMenu>li>ul{
-        padding: 0 10px!important;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
-        padding-bottom: 10px!important;
-}
-
-.headerMenu>li>a{
-        padding-bottom: 5px;
-    margin-bottom: 5px;
-}
-.headerMenu>li.active> ul{
-     position: revert!important;
-}
-.headerMenu>li>a{
-    pointer-events: none;
-}
-.headerMenu>li.active a.active{
-    pointer-events: all;
-}
-}
 
 </style>
 <?php if ($moneymaker2_common_minify) { ?>
@@ -68,7 +42,6 @@
   <script src="catalog/view/javascript/bootstrap/js/bootstrap.min.js"></script>
   <script src="catalog/view/javascript/jquery/moneymaker2/velocity.min.js"></script>
   <link href="catalog/view/javascript/font-awesome/css/font-awesome.min.css?v=270" rel="stylesheet" type="text/css" />
-  <link href="catalog/view/theme/moneymaker2/stylesheet/fonts.css?v=2" rel="stylesheet">
   <script src="catalog/view/javascript/common.moneymaker2.js" type="text/javascript"></script>
   
   <?php foreach ($styles as $style) { ?>
@@ -87,12 +60,8 @@
     <?php foreach ($analytics as $analytic) { ?>
         <?php echo $analytic; ?>
     <?php } ?>
-    
     <script src="catalog/view/theme/moneymaker2/js/main.min.js?v=1"></script>
-    <link href="catalog/view/theme/moneymaker2/stylesheet/common.css" rel="stylesheet">
-    <link href="catalog/view/theme/moneymaker2/stylesheet/header.css" rel="stylesheet">
-    <link href="catalog/view/theme/moneymaker2/stylesheet/footer.css" rel="stylesheet">
-    <link href="catalog/view/theme/moneymaker2/stylesheet/search.css" rel="stylesheet">
+    <link href="catalog/view/theme/moneymaker2/stylesheet/general.css" rel="stylesheet">
 
     <?php if (isset($class)) { ?>
       <?php if (strpos($class, 'common-home') !== false) { ?>
@@ -286,40 +255,6 @@
             <div class="header__bottom">
                 <div class="container">
                     <div class="header__bottom-inner">
-                      <div class="header__menu">
-                        <div class="header__menu-btn">Каталог</div>
-                            <div class="header__menu-inner">
-                                <ul class="headerMenu">
-                                    <li>
-                                        <a href="/vhodnye-dveri/">Входные двери</a>
-                                        <ul>
-                                            <li><a href="/vhodnye-dveri/dveri-v-dom/">Двери в дом</a></li>
-                                            <li><a href="/vhodnye-dveri/dveri-v-kvartiru/">Двери в квартиру</a></li>
-                                            <li><a href="/vhodnye-dveri/dvustvorchatye-dveri/">Двустворчатые двери</a></li>
-                                            <li><a href="/vhodnye-dveri/dveri-s-umnym-biometricheskim-zamkom/">Двери с умным ( биометрическим) замком</a></li>
-                                            <li><a href="/vhodnye-dveri/tehnicheskie-dveri/protivopozharnye-dveri/">Противопожарные, Технические двери</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="/mezhkomnatnye-dveri/">Межкомнатные двери</a>
-                                        <ul>
-                                            <li><a href="/specialnye-mezhkomnatnye-dveri/">Специальные</a></li>
-                                            <li><a href="/dekor-stenovye-paneli/">Декор. Стеновые панели</a></li>
-                                            <li><a href="/mezhkomnatnye-peregorodki/">Межкомнатные перегородки</a></li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <a href="/dvernaya-furnitura-v-internet-magazine/">Дверная фурнитура</a>
-                                        <ul>
-                                            <li><a href="/dvernaya-furnitura-v-internet-magazine/dvernye-ruchki/">Дверные ручки</a></li>
-                                            <li><a href="/dvernaya-furnitura-v-internet-magazine/dvernye-zamki/">Дверные замки</a></li>
-                                            <li><a href="/dvernaya-furnitura-v-internet-magazine/dvernye-petli/">Дверные петли</a></li>
-                                            <li><a href="/dvernaya-furnitura-v-internet-magazine/skobyanye-izdeliya/">Скобляные изделия</a></li>
-                                        </ul>
-                                    </li>
-                                </ul>
-                            </div>
-                          </div>
                           <?php if (!$moneymaker2_header_categories_menu_hide) { ?>
 <div class="header__catalog dropdown<?php if ($moneymaker2_header_categories_menu_mod) { ?> navbar-full-fw<?php } ?> categories-menu">
     <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown">
@@ -481,13 +416,4 @@
         
     </header>
    <button id="scrollToTopBtn" title="Go to top">▲</button>
-<script>
-    $('.headerMenu>li').click(function(){
-
-    setTimeout(() => {
-        $('.headerMenu>li a').removeClass('active')
-    $(this).find('a').addClass('active');
-    }, 100);
-})
-</script>
     <main>
