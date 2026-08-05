@@ -65,34 +65,34 @@
 
     <?php if (isset($class)) { ?>
       <?php if (strpos($class, 'common-home') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/home.css" rel="stylesheet">
+        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/home.css" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'product-category') !== false || strpos($class, 'product-manufacturer') !== false || strpos($class, 'product-search') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/catalog.css" rel="stylesheet">
+        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/catalog.css" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'product-category') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/category.css" rel="stylesheet">
+        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/category.css" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'product-manufacturer') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/manufacturer.css" rel="stylesheet">
+        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/manufacturer.css" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'product-search') !== false) { ?>
 
         <?php } ?>
       <?php if (strpos($class, 'product-compare') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/compare.css" rel="stylesheet">
+        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/compare.css" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'product-product') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/product.css" rel="stylesheet">
+        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/product.css" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'checkout-') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/checkout.css" rel="stylesheet">
+        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/checkout.css" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'account-') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/accounting.css" rel="stylesheet">
+        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/accounting.css" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'information-') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/information.css" rel="stylesheet">
+        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/information.css" rel="stylesheet">
       <?php } ?>
     <?php } ?>
 </head>
