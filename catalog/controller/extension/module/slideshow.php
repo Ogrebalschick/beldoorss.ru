@@ -18,7 +18,8 @@ class ControllerExtensionModuleSlideshow extends Controller {
 				$data['banners'][] = array(
 					'title' => $result['title'],
 					'link'  => $result['link'],
-					'image' => $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height'])
+					'image' => $this->model_tool_image->resize($result['image'], $setting['width'], $setting['height']),
+					'mobile_image' => $this->model_tool_image->resize($result['image'], round($setting['width'] / 2.5), round($setting['height'] / 2.5)),
 				);
 			}
 		}
