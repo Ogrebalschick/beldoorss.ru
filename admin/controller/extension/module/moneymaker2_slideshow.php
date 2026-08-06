@@ -420,7 +420,6 @@ class ControllerExtensionModuleMoneymaker2Slideshow extends Controller {
 				'link'  => $result['link'],
 				'multilink'  => isset($result['multilink']) ? $result['multilink'] : '',
 				'sort_order'  => $result['sort_order'],
-				
 			);
 		}
 
