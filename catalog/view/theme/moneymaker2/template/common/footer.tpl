@@ -949,6 +949,8 @@
 
 
 //--></script>
+
 </body>
+<script src="catalog/view/theme/moneymaker2/js/main.min.js?v=1"></script>
 
 </html>

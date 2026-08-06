@@ -60,7 +60,6 @@
     <?php foreach ($analytics as $analytic) { ?>
         <?php echo $analytic; ?>
     <?php } ?>
-    <script src="catalog/view/theme/moneymaker2/js/main.min.js?v=1"></script>
     <link href="catalog/view/theme/moneymaker2/stylesheet/general.css" rel="stylesheet">
 
     <?php if (isset($class)) { ?>
