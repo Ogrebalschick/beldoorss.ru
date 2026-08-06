@@ -6,10 +6,14 @@
               <?php if ($banners_setting['text']) { ?><p class="<?php if ($tilt3d) { ?>hidden-xxs<?php } else { ?>hidden-xs<?php } ?><?php if ($banners_setting['text_spacing']) { ?> spacing<?php } ?>"><?php echo $banners_setting['text']; ?></p><?php } ?>
               <?php if ($banners_setting['link']||$banners_setting['multilink']) { ?><p><a href="<?php echo $banners_setting['multilink'] ? $banners_setting['multilink'] : $banners_setting['link']; ?>" title="<?php echo $banners_setting['title']; ?>" class="btn <?php if (!$banners_setting['minimize']) { ?>btn-lg<?php } ?> btn-<?php echo $banners_setting['btn_style']; ?>"><?php echo $banners_setting['btn_title']; ?></a></p><?php } ?>
             </div>
-            <img src="<?php echo $banners_setting['image']; ?>" alt="<?php echo $banners_setting['title']; ?>" class="img-responsive" />
+            <picture>
+              <source media="(max-width: 767px)" srcset="<?php echo $banners_setting['mobile_image']; ?>">
+              <img src="<?php echo $banners_setting['image']; ?>" alt="<?php echo $banners_setting['title']; ?>" class="img-responsive" />
+            </picture>
         </div>
     <?php } ?>
 </div>
+
 <script><!--
   <?php if ($parallax) { ?>
     $('head').append('<style type="text/css"> #moneymaker2_slideshow<?php echo $module; ?> { overflow: hidden; } @media (min-width: 320px) { #moneymaker2_slideshow<?php echo $module; ?>, #moneymaker2_slideshow<?php echo $module; ?> .owl-item .item { height: <?php echo $parallax_heights["xxxsm"]; ?>px; } } @media (min-width: 450px) { #moneymaker2_slideshow<?php echo $module; ?>, #moneymaker2_slideshow<?php echo $module; ?> .owl-item .item { height: <?php echo $parallax_heights["xxsm"]; ?>px; } } @media (min-width: 560px) { #moneymaker2_slideshow<?php echo $module; ?>, #moneymaker2_slideshow<?php echo $module; ?> .owl-item .item { height: <?php echo $parallax_heights["xsm"]; ?>px; } } @media (min-width: 768px) { #moneymaker2_slideshow<?php echo $module; ?>, #moneymaker2_slideshow<?php echo $module; ?> .owl-item .item { height: <?php echo $parallax_heights["sm"]; ?>px; } } @media (min-width: 992px) { #moneymaker2_slideshow<?php echo $module; ?>, #moneymaker2_slideshow<?php echo $module; ?> .owl-item .item { height: <?php echo $parallax_heights["md"]; ?>px; } } @media (min-width: 1200px) { #moneymaker2_slideshow<?php echo $module; ?>, #moneymaker2_slideshow<?php echo $module; ?> .owl-item .item { height: <?php echo $parallax_heights["lg"]; ?>px; } } </style>');
