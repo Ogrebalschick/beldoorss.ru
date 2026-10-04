@@ -26,16 +26,16 @@
   <?php foreach ($moneymaker2_minify['ext_css'] as $value) { ?>
   <link href="<?php echo $value['href']; ?>" type="text/css" rel="<?php echo $value['rel']; ?>" media="<?php echo $value['media']; ?>" />
   <?php } ?>
-  <link href="min/?g=moneymaker2_css<?php echo $moneymaker2_minify['int_css'] ? "&f=".implode(',', $moneymaker2_minify['int_css']) : ''; ?>&v=270" rel="preload" as="style">
-  <link href="min/?g=moneymaker2_css<?php echo $moneymaker2_minify['int_css'] ? "&f=".implode(',', $moneymaker2_minify['int_css']) : ''; ?>&v=270" rel="stylesheet">
+  <link href="min/?g=moneymaker2_css<?php echo $moneymaker2_minify['int_css'] ? "&f=".implode(',', $moneymaker2_minify['int_css']) : ''; ?>&v=271" rel="preload" as="style">
+  <link href="min/?g=moneymaker2_css<?php echo $moneymaker2_minify['int_css'] ? "&f=".implode(',', $moneymaker2_minify['int_css']) : ''; ?>&v=271" rel="stylesheet">
   <?php foreach ($links as $link) { ?>
   <link href="<?php echo $link['href']; ?>" rel="<?php echo $link['rel']; ?>" />
   <?php } ?>
   <?php foreach ($moneymaker2_minify['ext_js'] as $value) { ?>
   <script src="<?php echo $value; ?>"></script>
   <?php } ?>
-  <link href="min/?g=moneymaker2_js<?php echo $moneymaker2_minify['int_js'] ? "&f=".implode(',', $moneymaker2_minify['int_js']) : ''; ?>&v=270" rel="preload" as="script">
-  <script src="min/?g=moneymaker2_js<?php echo $moneymaker2_minify['int_js'] ? "&f=".implode(',', $moneymaker2_minify['int_js']) : ''; ?>&v=270"></script>
+  <link href="min/?g=moneymaker2_js<?php echo $moneymaker2_minify['int_js'] ? "&f=".implode(',', $moneymaker2_minify['int_js']) : ''; ?>&v=271" rel="preload" as="script">
+  <script src="min/?g=moneymaker2_js<?php echo $moneymaker2_minify['int_js'] ? "&f=".implode(',', $moneymaker2_minify['int_js']) : ''; ?>&v=271"></script>
 <?php } else { ?>
   <script src="catalog/view/javascript/jquery/jquery-2.1.1.min.js"></script>
   <link href="catalog/view/javascript/bootstrap/css/bootstrap.min.css?v=2" rel="stylesheet" media="screen" />
