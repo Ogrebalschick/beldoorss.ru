@@ -347,10 +347,11 @@ class ControllerProductProduct extends Controller {
 
 			$data['options'] = array();
 			
-		    $summ_option = '';//SV добавил
-		    
 			foreach ($this->model_catalog_product->getProductOptions($this->request->get['product_id']) as $option) {
 				$product_option_value_data = array();
+				// Цена комплекта считается отдельно по каждой опции.
+				// Доборы в базовую сумму не входят — только по явной галочке.
+				$summ_option = 0;
 
 				foreach ($option['product_option_value'] as $option_value) {
 					if (!$option_value['subtract'] || ($option_value['quantity'] > 0)) {
@@ -370,8 +371,8 @@ class ControllerProductProduct extends Controller {
 							'price_prefix'            => $option_value['price_prefix']
 						);
 					}
-					if ($option['type'] == 'checkbox') {
-				        $summ_option += $option_value['price'];//SV добавил
+					if ($option['type'] == 'checkbox' && utf8_strpos(utf8_strtolower($option_value['name']), 'добор') === false) {
+						$summ_option += (float)$option_value['price'];
 					}
 				}
 
@@ -380,7 +381,7 @@ class ControllerProductProduct extends Controller {
 					'product_option_value' => $product_option_value_data,
 					'option_id'            => $option['option_id'],
 					'name'                 => $option['name'],
-					'summ_option'          => $this->currency->format(($product_info['price']+$summ_option), $this->session->data['currency']),//SV добавил
+					'summ_option'          => $this->currency->format((((float)$product_info['special'] ? (float)$product_info['special'] : (float)$product_info['price']) + $summ_option), $this->session->data['currency']),
 					'type'                 => $option['type'],
 					'value'                => $option['value'],
 					'required'             => $option['required']

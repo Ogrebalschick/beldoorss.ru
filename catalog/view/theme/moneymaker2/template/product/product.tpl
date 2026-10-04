@@ -520,11 +520,12 @@
                                                                         </div>
                                                                 <?php } ?>
                                                                 <?php foreach ($option['product_option_value'] as $option_value) { ?>
-                                                                <div class="checkbox">
+                                                                <?php $is_dobor = (utf8_strpos(utf8_strtolower($option_value['name']), 'добор') !== false); ?>
+                                                                <div class="checkbox<?php echo $is_dobor ? ' checkbox-dobor' : ''; ?>">
                                                                     <label>
                                                                         <input type="checkbox"
                                                                             name="option[<?php echo $option['product_option_id']; ?>][]"
-                                                                            value="<?php echo $option_value['product_option_value_id']; ?>" />
+                                                                            value="<?php echo $option_value['product_option_value_id']; ?>"<?php echo $is_dobor ? ' data-dobor="1" class="option-dobor"' : ''; ?> />
                                                                             
                                                                         <?php if ($option_value['image']) { ?>
                                                                             <img src="<?php echo $option_value['image']; ?>"
@@ -556,11 +557,12 @@
                                                             
                                                             <div id="input-option<?php echo $option['product_option_id']; ?>" class="input-option" style="display: none;">
                                                                 <?php foreach ($option['product_option_value'] as $option_value) { ?>
-                                                                <div class="checkbox">
+                                                                <?php $is_dobor = (utf8_strpos(utf8_strtolower($option_value['name']), 'добор') !== false); ?>
+                                                                <div class="checkbox<?php echo $is_dobor ? ' checkbox-dobor' : ''; ?>">
                                                                     <label>
                                                                         <input type="checkbox"
                                                                             name="option[<?php echo $option['product_option_id']; ?>][]"
-                                                                            value="<?php echo $option_value['product_option_value_id']; ?>" />
+                                                                            value="<?php echo $option_value['product_option_value_id']; ?>"<?php echo $is_dobor ? ' data-dobor="1" class="option-dobor"' : ''; ?> />
                                                                             
                                                                         <?php if ($option_value['image']) { ?>
                                                                             <img src="<?php echo $option_value['image']; ?>"

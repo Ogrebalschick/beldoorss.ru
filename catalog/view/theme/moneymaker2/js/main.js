@@ -9,6 +9,146 @@ if (document.location.href.indexOf('https://new.beldoorss.ru/index.php?route=inf
     location = "http://beldoorss.ru/galereya";
 };
 
+/**
+ * Калькулятор стоимости двери на карточке товара.
+ *
+ * Формула:
+ *   итог = цена полотна (базовая)
+ *        + отмеченные пункты комплекта
+ *        + отмеченные дополнительные опции
+ *
+ * Доборы («Комплект доборов…», «Установка доборов…») НЕ входят
+ * в базовую цену «Комплект стандарт». Их стоимость прибавляется
+ * только если пользователь явно поставил галочку.
+ *
+ * Автокальк OpenCart (`recalculateprice` в product.tpl) считает
+ * ту же сумму по отмеченным input[data-price].
+ */
+(function ($) {
+    var DOBOR_RE = /добор/i;
+
+    function parseMoney(value) {
+        if (value == null || value === '') {
+            return 0;
+        }
+        return Number(String(value).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+    }
+
+    function parseDisplayedPrice(text) {
+        return Number(String(text || '').replace(/[^\d]/g, '')) || 0;
+    }
+
+    function formatRub(amount) {
+        amount = Math.round(Number(amount) || 0);
+        return String(amount).replace(/(\d)(?=(\d{3})+(?:\D|$))/g, '$1 ') + ' руб.';
+    }
+
+    function isDoborInput($input) {
+        if (!$input || !$input.length) {
+            return false;
+        }
+        if (String($input.attr('data-dobor')) === '1' || $input.hasClass('option-dobor')) {
+            return true;
+        }
+        var labelText = $input.closest('label').text() || '';
+        return DOBOR_RE.test(labelText);
+    }
+
+    function kitFormGroup() {
+        return $('.options .checkbox-option').filter(function () {
+            return /комплект/i.test($(this).text());
+        }).closest('.form-group').first();
+    }
+
+    function getCanvasPrice() {
+        var $polotno = $('.input-option label').filter(function () {
+            return /полотно/i.test($(this).text());
+        }).first();
+        if ($polotno.length) {
+            var fromLabel = parseDisplayedPrice($polotno.text());
+            if (fromLabel) {
+                return fromLabel;
+            }
+        }
+        var $shown = $('.price_base .price-new.price-show, .price_base .price-new').first();
+        if ($shown.length) {
+            return parseDisplayedPrice($shown.text());
+        }
+        return parseDisplayedPrice($('.product-total').not('.checkbox-option').first().find('.price-new').text());
+    }
+
+    function applyOptionPrice(total, $input) {
+        var prefix = String($input.data('prefix') || '+');
+        var price = parseMoney($input.data('price'));
+        if (prefix === '=') {
+            return price;
+        }
+        if (prefix === '-') {
+            return total - price;
+        }
+        return total + price;
+    }
+
+    var storedKitPrice = '';
+
+    function rememberKitPrice() {
+        if (!storedKitPrice) {
+            storedKitPrice = $.trim(kitFormGroup().find('.product-price').first().text());
+        }
+    }
+
+    function kitHasCheckedOptions() {
+        return kitFormGroup().find('.input-option input[type="checkbox"]:checked').length > 0;
+    }
+
+    function updateKitHeadline() {
+        var $group = kitFormGroup();
+        if (!$group.length) {
+            return;
+        }
+        rememberKitPrice();
+        if (!kitHasCheckedOptions()) {
+            if (storedKitPrice) {
+                $group.find('.product-price').first().text(storedKitPrice);
+            }
+            return;
+        }
+        var total = getCanvasPrice();
+        $group.find('.input-option input[type="checkbox"]:checked').each(function () {
+            total = applyOptionPrice(total, $(this));
+        });
+        $group.find('.product-price').first().text(formatRub(total));
+    }
+
+    function recalcAll() {
+        if (typeof recalculateprice === 'function') {
+            recalculateprice();
+        }
+        updateKitHeadline();
+    }
+
+    /**
+     * @param {boolean} selectKit true — включить состав комплекта БЕЗ доборов
+     */
+    function applyKitSelection(selectKit) {
+        kitFormGroup().find('.input-option input[type="checkbox"]').each(function () {
+            var $el = $(this);
+            if (!selectKit) {
+                $el.prop('checked', false);
+            } else {
+                // Доборы остаются выключенными, пока клиент сам не отметит галочку
+                $el.prop('checked', !isDoborInput($el));
+            }
+        });
+        recalcAll();
+    }
+
+    window.beldoorssIsDobor = isDoborInput;
+    window.beldoorssUpdateKitPrice = updateKitHeadline;
+    window.beldoorssApplyKitSelection = applyKitSelection;
+    window.beldoorssRecalcDoorPrice = recalcAll;
+})(jQuery);
+
 $(document).ready(function () {
     $('.header__menu').hover(function () {
         $('.header__menu-inner').toggleClass('active')
@@ -75,44 +215,42 @@ $(document).ready(function () {
         console.log('1234')
     });
 
-    /* Открывать и активировать сгруппированные опции в картоке товара*/
-    $(".checkbox-option").siblings('.input-option').find('input').prop("checked", false);// сброс всех при загрузке страницы
-    $(".product-total").on('click', function (e) {
-        var index = $(this).index('.product-total');
-        var blockActive = $($('.product-total')[index]);
-        var $link = $(this).find("i");
-        var thisBlock = $(this).parent();
-        if (thisBlock.hasClass('options-more')) {
+    /* Вкладки комплектации: полотно / комплект стандарт / доп.опции */
+    if (typeof window.beldoorssUpdateKitPrice === 'function') {
+        window.beldoorssUpdateKitPrice();
+    }
+    $('.checkbox-option').siblings('.input-option').find('input').prop('checked', false);
+    if (typeof recalculateprice === 'function') {
+        recalculateprice();
+    }
 
-        } else {
-            if (e.target !== $link[0]) { // если это не стрелочка
-                $('.product-total').not(blockActive).removeClass('active');
-                blockActive.addClass('active');
-                if (index !== 0) {
-                    $(this).siblings('.input-option').find('input').prop("checked", true);
-                    $(this).siblings('.input-option').find('.checkbox>label:contains("Комплект доборов") input').prop("checked", false);
-                    recalculateprice();
-                } else {
-                    $('.checkbox-option').siblings('.input-option').find('input').prop("checked", false);
-                    recalculateprice();
-                }
-            }
+    $('.product-total').on('click', function (e) {
+        var $block = $(this);
+        var $arrow = $block.find('i');
+        if ($block.closest('.options-more').length) {
+            return;
         }
-        //  if ( $(this).siblings('.input-option').css('display') == 'none' ) {
-        //     $(this).siblings('.input-option').show();
-        // } else {
-        //     $(this).siblings('.input-option').hide();
-        // }
-    });
-    console.log('123')
-    $(".product-total.checkbox-option i").on('click', function (e) {
-        if ($(this).parent().siblings('.input-option').css('display') == 'none') {
-            $(this).parent().siblings('.input-option').show();
-        } else {
-            $(this).parent().siblings('.input-option').hide();
+        if (e.target === $arrow[0] || $(e.target).closest('i').length) {
+            return;
+        }
+        $('.product-total').not($block).removeClass('active');
+        $block.addClass('active');
+        if (typeof window.beldoorssApplyKitSelection === 'function') {
+            // Первая вкладка («Цена за полотно» / «Цена») — только полотно
+            window.beldoorssApplyKitSelection($block.hasClass('checkbox-option'));
         }
     });
-    /* Открывать и активировать сгруппированные опции в картоке товара /> */
+
+    $('.product-total.checkbox-option i').on('click', function () {
+        var $list = $(this).parent().siblings('.input-option');
+        $list.toggle();
+    });
+
+    $(document).on('change', '.options input[type="checkbox"]', function () {
+        if (typeof window.beldoorssUpdateKitPrice === 'function') {
+            window.beldoorssUpdateKitPrice();
+        }
+    });
 
     // Плюс/минус в карточке товара  
     $(".quantity-add").click(function () {
@@ -216,9 +354,7 @@ $(document).ready(function () {
             var priceProcent = 1 - ('0.' + price);
             var priceNew = priceOld.replace(/[^\d]/g, '') * priceProcent;
         } else if (symol == '+') {
-            var pricePlus = price;
-            var priceNew = priceOld.replace(/[^\d]/g, '') + pricePlus;
-            console.log(priceNew);
+            var priceNew = Number(priceOld.replace(/[^\d]/g, '')) + Number(price);
         } else if (symol == '-') {
             var priceMinus = price;
             var priceNew = priceOld.replace(/[^\d]/g, '') - priceMinus;
@@ -233,24 +369,11 @@ $(document).ready(function () {
         var readyPrice = priceNew.replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ');
 
 
-        if (price == 0) {
-            $('.product-total__inner .product-price').text(complectPriceOld);
-        } else {
-            console.log(complectPriceOldAfter + ' / ' + priceOld + ' / ' + readyPrice);
-            var complectPriceNew = Number(complectPriceOldAfter.replace(/[^\d]/g, '')) - Number(priceOld.replace(/[^\d]/g, '')) + Number(readyPrice.replace(/[^\d]/g, ''));
-            $('.product-total__inner .product-price').text(String(complectPriceNew).replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ') + ' руб.');
-        }
-
-
-
-        console.log('complectPriceOld ' + complectPriceOld);
-        console.log('readyPrice ' + readyPrice);
-        console.log('complectPriceNew ' + complectPriceNew);
-
-
-
         $('.product-total__inner .price-new.price-show').text(readyPrice + ' руб.');
         $('.input-option').find('label:contains("Полотно")').text("Полотно ( = " + readyPrice + " руб. )");
+        if (typeof window.beldoorssUpdateKitPrice === 'function') {
+            window.beldoorssUpdateKitPrice();
+        }
 
         var data_link_color = $(this).attr("data-link");
         if (data_link_color != '0') {
@@ -299,79 +422,6 @@ $(document).ready(function () {
         console.log('not pustoi');
         $(".catalogTitle").parent().attr('hidden', false);
     }
-
-
-    // НАЧАЛО: ФОРМИРОВАНИЕ НОВОЙ ЦЕНЫ ПОСЛЕ ЗАГРУЗКИ СТРАНИЦЫ ЗА ПОЛОТНО, КОРОБКА ДВЕРНАЯ, КОМПЛЕКТ НАЛИЧНИКОВ 
-    let komplektPrice = $('.options').find('div:contains("Комплект стандарт")').parent().find('.product-price').text().replace(/[^\d]/g, '');
-    let komplektDoborovPrice = $('.options').find('label:contains("Комплект доборов")').parent().find('input').attr('data-price');
-    console.log('komplektPrice: ' + komplektPrice);
-    console.log(komplektDoborovPrice)
-    if (komplektDoborovPrice != 0) {
-        let komplatePriceNew = Number(komplektPrice) - Number(komplektDoborovPrice);
-        komplatePriceNew = String(komplatePriceNew).replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ');
-        $('.options').find('div:contains("Комплект стандарт")').parent().find('.product-price').text(komplatePriceNew + " руб.");
-    }
-
-    $(document).ready(function () {
-        komplektPrice = $('.options').find('div:contains("Комплект стандарт")').parent().find('.product-price').text().replace(/[^\d]/g, '');
-        console.log('komplektPrice: ' + komplektPrice);
-    });
-    // КОНЕЦ: ФОРМИРОВАНИЕ НОВОЙ ЦЕНЫ ПОСЛЕ ЗАГРУЗКИ СТРАНИЦЫ ЗА ПОЛОТНО, КОРОБКА ДВЕРНАЯ, КОМПЛЕКТ НАЛИЧНИКОВ 
-
-
-    let komplektPriceFirst = $('.product-total__inner .product-price').text();
-
-
-    // НАЧАЛО: ВОЗВРАЗЕНИЕ НАЧАЛЬНОЙ ПРИ НАЖАТИИ НА "Цена за полотно" СФОРМИРОВАННОЙ ЦЕНЫ ЗА ПОЛОТНО, КОРОБКА ДВЕРНАЯ, КОМПЛЕКТ НАЛИЧНИКОВ 
-    $('.price_base').click(function () {
-        $('.options').find('div:contains("Комплект стандарт")').parent().find('.product-price').text(komplektPriceFirst);
-        console.log('komplect standart: ' + komplektPriceFirst);
-    })
-    // КОНЕЦ: ВОЗВРАЗЕНИЕ НАЧАЛЬНОЙ ПРИ НАЖАТИИ НА "Цена за полотно" СФОРМИРОВАННОЙ ЦЕНЫ ЗА ПОЛОТНО, КОРОБКА ДВЕРНАЯ, КОМПЛЕКТ НАЛИЧНИКОВ 
-    console.log('complectPriceOld: ' + $('.product-total__inner .product-price').text())
-    var complectPriceOld = $('.product-total__inner .product-price').text();
-
-
-
-    let isClickedProductTotal = false;
-    $('.price_base').click(function () {
-
-        isClickedProductTotal = false;
-        console.log('price_base clicked!');
-    })
-    $('.product-right .options label').find("input").click(function () {
-        console.log(isClickedProductTotal)
-        if (isClickedProductTotal == true) {
-            if ($(this).prop('checked')) {
-                let komplektPrice = $('.options').find('div:contains("Комплект стандарт")').parent().find('.product-price').text().replace(/[^\d]/g, '');
-                let komplektDoborovPrice = $(this).attr('data-price');
-                let komplatePriceNew = Number(komplektPrice) + Number(komplektDoborovPrice);
-                komplatePriceNew = String(komplatePriceNew).replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ');
-                $('.options').find('div:contains("Комплект стандарт")').parent().find('.product-price').text(komplatePriceNew + " руб.");
-            } else {
-                let komplektPrice = $('.options').find('div:contains("Комплект стандарт")').parent().find('.product-price').text().replace(/[^\d]/g, '');
-                let komplektDoborovPrice = $(this).attr('data-price');
-                let komplatePriceNew = Number(komplektPrice) - Number(komplektDoborovPrice);
-                komplatePriceNew = String(komplatePriceNew).replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ');
-                $('.options').find('div:contains("Комплект стандарт")').parent().find('.product-price').text(komplatePriceNew + " руб.");
-            }
-        } else {
-            isClickedProductTotal = true;
-            if ($(this).prop('checked')) {
-                let komplektPrice = $('.input-option').find('label:contains("Полотно")').text().replace(/[^\d]/g, '');
-                let komplektDoborovPrice = $(this).attr('data-price');
-                let komplatePriceNew = Number(komplektPrice) + Number(komplektDoborovPrice);
-                komplatePriceNew = String(komplatePriceNew).replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ');
-                $('.options').find('div:contains("Комплект стандарт")').parent().find('.product-price').text(komplatePriceNew + " руб.");
-            } else {
-                let komplektPrice = $('.input-option').find('label:contains("Полотно")').text().replace(/[^\d]/g, '');
-                let komplektDoborovPrice = $(this).attr('data-price');
-                let komplatePriceNew = Number(komplektPrice) - Number(komplektDoborovPrice);
-                komplatePriceNew = String(komplatePriceNew).replace(/(\d)(?=(\d{3})+(\D|$))/g, '$1 ');
-                $('.options').find('div:contains("Комплект стандарт")').parent().find('.product-price').text(komplatePriceNew + " руб.");
-            }
-        }
-    })
 
 
     // let maincategories__category_vhod = `
