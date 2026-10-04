@@ -57,7 +57,7 @@ class ControllerExtensionModuleMoneymaker2Slideshow extends Controller {
 					'title_spacing' => isset($value['title_spacing']) ? $value['title_spacing'] : '',
 					'text_spacing' => isset($value['text_spacing']) ? $value['text_spacing'] : '',
 					'image' => is_file(DIR_IMAGE . $value['image']) ? $this->model_tool_image->resize($value['image'], $setting['width'], $setting['height']) : $this->model_tool_image->resize('no_image.png', $setting['width'], $setting['height']),
-					'mobile_image' => $this->model_tool_image->resize($value['image'], round($setting['width'] / 2), round($setting['height'] / 2)),
+					'mobile_image' => $this->model_tool_image->resize($value['image'], round($setting['width'] / 4), round($setting['height'] / 4)),
 				);
 				$banners_settings_sort_order[$key] = $value['sort_order'];
 			}

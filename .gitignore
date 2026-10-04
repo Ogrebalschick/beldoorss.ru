@@ -48,3 +48,5 @@ storage_new.beldoorss.ru/
 system/cache/
 system/storage/
 image/
+
+db_schema.sql
