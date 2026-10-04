@@ -1,4 +1,8 @@
 <?
+if (empty($_POST['agree_pdn'])) {
+    echo 'Необходимо согласие на обработку персональных данных';
+    exit;
+}
 $firstName = $_POST['firstName'];
 $phone = $_POST['phone'];
 $mail = $_POST['mail'];

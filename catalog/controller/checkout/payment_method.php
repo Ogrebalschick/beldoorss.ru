@@ -180,6 +180,10 @@ class ControllerCheckoutPaymentMethod extends Controller {
 			}
 		}
 
+		if (empty($this->request->post['agree_pdn'])) {
+			$json['error']['warning'] = 'Необходимо согласие на обработку персональных данных';
+		}
+
 		if (!$json) {
 			$this->session->data['payment_method'] = $this->session->data['payment_methods'][$this->request->post['payment_method']];
 

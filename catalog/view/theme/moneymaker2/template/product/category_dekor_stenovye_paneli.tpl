@@ -17,6 +17,10 @@
                         <input type="text" placeholder="+7 (777) 777 7777*" class="tel" name="phone">
                         <input type="text" placeholder="E-mail*" name="mail">
                         <input type="text" placeholder="Страна*" name="country">
+                        <label class="agree-pdn-wrap" style="display:block;margin:10px 0;font-size:13px;">
+                            <input type="checkbox" class="agree-checkbox" name="agree_pdn" value="1" required>
+                            Я согласен на <a href="/politika-konfidencialnosti" target="_blank" rel="noopener">обработку персональных данных</a>
+                        </label>
                         <button type="submit" class="special__form-btn">Отправить заявку</button>
                     </form>
                     </div>

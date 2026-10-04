@@ -7,13 +7,11 @@
 			<form id="confirm_form" class="form-horizontal">
 			</form>
 
-			<!-- ✅ Чекбокс с условиями -->
-			<div class="form-group" style="margin-bottom: 15px;">
+			<!-- Чекбокс ФЗ-152 -->
+			<div class="form-group agree-pdn-wrap" style="margin-bottom: 15px;">
 				<label for="agree_terms" style="display: block; font-weight: normal;">
-					<input type="checkbox" id="agree_terms" style="margin-right: 8px;" />
-					Спасибо за ваш заказ! Перед покупкой вы соглашаетесь с условиями:
-					<a href="/politika-konfidencialnosti" target="_blank">Политика конфиденциальности</a>,
-					<a href="/polzovatelskoe-soglashenie" target="_blank">Пользовательское соглашение</a>
+					<input type="checkbox" id="agree_terms" class="agree-checkbox" name="agree_pdn" value="1" required style="margin-right: 8px;" />
+					Я согласен на <a href="/politika-konfidencialnosti" target="_blank" rel="noopener">обработку персональных данных</a>
 				</label>
 			</div>
 
@@ -40,9 +38,17 @@ $(function () {
 		template: _.template($("#confirm_template").html())
 	}));
 
-	// ✅ Активируем кнопку только если чекбокс отмечен
+	// Активируем кнопку только если чекбокс отмечен
 	$(document).on('change', '#agree_terms', function () {
 		$('#qc_confirm_order').prop('disabled', !this.checked);
+	});
+	$(document).on('click', '#qc_confirm_order', function (e) {
+		if (!$('#agree_terms').is(':checked')) {
+			e.preventDefault();
+			e.stopImmediatePropagation();
+			alert('Необходимо согласие на обработку персональных данных');
+			return false;
+		}
 	});
 });
 </script>

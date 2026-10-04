@@ -79,6 +79,18 @@ if (isset($this->error['phone'])) {
 			$data['error_enquiry'] = '';
 		}
 
+		if (isset($this->error['agree'])) {
+			$data['error_agree'] = $this->error['agree'];
+		} else {
+			$data['error_agree'] = '';
+		}
+
+		if (isset($this->request->post['agree'])) {
+			$data['agree'] = $this->request->post['agree'];
+		} else {
+			$data['agree'] = '';
+		}
+
 		$data['button_submit'] = $this->language->get('button_submit');
 
 		$data['action'] = $this->url->link('information/contact', '', true);
@@ -164,6 +176,10 @@ if (isset($this->error['phone'])) {
 	}
 
 	protected function validate() {
+		if (empty($this->request->post['agree'])) {
+			$this->error['agree'] = $this->language->get('error_agree_pdn');
+		}
+
 		if ((utf8_strlen($this->request->post['name']) < 3) || (utf8_strlen($this->request->post['name']) > 32)) {
 			$this->error['name'] = $this->language->get('error_name');
 		}

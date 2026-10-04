@@ -386,17 +386,15 @@
           <div class="form-group">
             <div class="panel panel-info"><div class="panel-heading text-center"><small><?php echo $text_quickorder_help; ?></small></div></div>
           </div>
-          <?php if ($text_agree) { ?>
-          <div class="form-group">
+          <div class="form-group agree-pdn-wrap">
             <div class="col-sm-10 col-sm-offset-1 text-center">
               <div class="checkbox">
                 <label>
-                  <input type="checkbox" id="quickorderagree"  name="quickorderagree" value="1" /> <?php echo $text_agree; ?>
+                  <input type="checkbox" class="agree-checkbox" id="quickorderagree" name="quickorderagree" value="1" required> Я согласен на <a href="/politika-konfidencialnosti" target="_blank" rel="noopener">обработку персональных данных</a>
                 </label>
               </div>
             </div>
           </div>
-          <?php } ?>
         </div>
         <div class="buttons">
           <p class="text-center">
@@ -430,6 +428,23 @@
 <?php } ?>
 
 <script><!--
+  var pdnAgreeMsg = 'Необходимо согласие на обработку персональных данных';
+  $(document).on('invalid', '.agree-checkbox', function() {
+    this.setCustomValidity(pdnAgreeMsg);
+  });
+  $(document).on('change', '.agree-checkbox', function() {
+    this.setCustomValidity(this.checked ? '' : pdnAgreeMsg);
+  });
+  $(document).on('submit', 'form', function(e) {
+    var $cb = $(this).find('.agree-checkbox');
+    if ($cb.length && !$cb.filter(':checked').length) {
+      e.preventDefault();
+      $cb.each(function() { this.setCustomValidity(pdnAgreeMsg); });
+      alert(pdnAgreeMsg);
+      $cb.first().focus();
+      return false;
+    }
+  });
   $(document).ready(function() {
     $(window).load(function(){
         var oldSSB = $.fn.modal.Constructor.prototype.setScrollbar;
@@ -542,6 +557,7 @@
     })
 
     $('#orderModal').on('show.bs.modal', function (event) {
+      $('#quickorderagree').prop('checked', false);
       if (($("#popupModal").data('bs.modal') || {}).isShown) $('#popupModal').css('opacity', '0');
       var target = $(event.relatedTarget);
       var mode = target.data('order-mode');
@@ -701,7 +717,7 @@
             $(".quickorderphone.form-control-feedback").removeClass('hidden');
           }
         <?php } ?>
-        if ((($( "#orderModal .modal-dialog-order" ).length && $("#quickorderemail").hasClass('valid') && $("#quickorderphone").hasClass('valid')) || ($( "#orderModal .modal-dialog-callback" ).length && $("#quickorderphone").hasClass('valid')) || ($( "#orderModal .modal-dialog-newsletter" ).length && $("#quickorderemail").hasClass('valid'))) <?php if ($text_agree) { ?>&&$("#quickorderagree").is(':checked')<?php } ?> ) {
+        if ((($( "#orderModal .modal-dialog-order" ).length && $("#quickorderemail").hasClass('valid') && $("#quickorderphone").hasClass('valid')) || ($( "#orderModal .modal-dialog-callback" ).length && $("#quickorderphone").hasClass('valid')) || ($( "#orderModal .modal-dialog-newsletter" ).length && $("#quickorderemail").hasClass('valid'))) && $("#quickorderagree").is(':checked') ) {
           $("#orderModal .panel").removeClass('panel-danger');
           $('#quickorderagree').parent().parent().removeClass('text-danger');
           $("#orderModal .panel").addClass('panel-info');
@@ -733,12 +749,10 @@
           $('#quickorderphone').parent().parent().addClass('has-error');
           $("#orderModal .panel small").html( $("#orderModal .panel small").html() + '<?php echo $error_quickorder_phone; ?><br />');
         }
-        <?php if ($text_agree) { ?>
         if (!$("#quickorderagree").is(':checked')) {
           $('#quickorderagree').parent().parent().addClass('text-danger');
-          $("#orderModal .panel small").html( $("#orderModal .panel small").html() + '<?php echo $error_agree; ?>');
+          $("#orderModal .panel small").html( $("#orderModal .panel small").html() + 'Необходимо согласие на обработку персональных данных');
         }
-        <?php } ?>
       };
       <?php if ($moneymaker2_modules_quickorder_enabled) { ?>
       function addQuickOrder() {
@@ -813,7 +827,7 @@
         $.ajax({
           url: 'index.php?route=common/footer/addCallback',
           type: 'post',
-          data: $('#orderModal input[type=\'text\'], #orderModal input[type=\'tel\']'),
+          data: $('#orderModal input[type=\'text\'], #orderModal input[type=\'tel\'], #orderModal input[type=\'checkbox\']:checked'),
           dataType: 'json',
           success: function(json) {
             $('.alert, .text-danger').remove();
@@ -875,7 +889,7 @@
         $.ajax({
           url: 'index.php?route=common/footer/addSubscriber',
           type: 'post',
-          data: $('#orderModal input[type=\'email\'], #orderModal input[type=\'text\']'),
+          data: $('#orderModal input[type=\'email\'], #orderModal input[type=\'text\'], #orderModal input[type=\'checkbox\']:checked'),
           dataType: 'json',
           success: function(json) {
             $('.alert, .text-danger').remove();

@@ -24,6 +24,12 @@
 <p>
   <textarea name="comment" rows="8" class="form-control"><?php echo $comment; ?></textarea>
 </p>
+<div class="agree-pdn-wrap" style="margin: 10px 0;">
+  <label>
+    <input type="checkbox" class="agree-checkbox" name="agree_pdn" value="1" required>
+    Я согласен на <a href="/politika-konfidencialnosti" target="_blank" rel="noopener">обработку персональных данных</a>
+  </label>
+</div>
 <?php if ($text_agree) { ?>
 <div class="buttons">
   <div class="pull-right"><?php echo $text_agree; ?>

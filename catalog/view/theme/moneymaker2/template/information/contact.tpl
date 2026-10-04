@@ -147,21 +147,19 @@
             </div>
           </div>
           <?php echo $captcha; ?>
-          <?php if ($text_agree) { ?>
-          <div class="form-group required">
+          <div class="form-group required agree-pdn-wrap">
             <div class="col-sm-offset-2 col-sm-10">
-              <?php echo $text_agree; ?>
-              <?php if ($agree) { ?>
-              <input type="checkbox" name="agree" value="1" checked="checked" />
-              <?php } else { ?>
-              <input type="checkbox" name="agree" value="1" />
-              <?php } ?>
-              <?php if ($error_agree) { ?>
+              <div class="checkbox">
+                <label>
+                  <input type="checkbox" class="agree-checkbox" name="agree" value="1" required<?php if (!empty($agree)) { ?> checked="checked"<?php } ?> />
+                  Я согласен на <a href="/politika-konfidencialnosti" target="_blank" rel="noopener">обработку персональных данных</a>
+                </label>
+              </div>
+              <?php if (!empty($error_agree)) { ?>
               <div class="text-danger"><?php echo $error_agree; ?></div>
               <?php } ?>
             </div>
           </div>
-          <?php } ?>
           <div class="form-group required">
               <div class="buttons col-sm-offset-2 col-sm-10">
                 <button type="submit" class="btn btn-primary"><i class="fa fa-angle-right"></i> <?php echo $button_submit; ?></button>
