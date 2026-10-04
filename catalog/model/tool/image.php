@@ -7,8 +7,10 @@ class ModelToolImage extends Model {
 
 		$extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
 
-		// SVG в витрине: без ресайза GD
-		if ($extension == 'svg') {
+		// SVG всегда без ресайза. WebP на PHP 7.0: GD умеет imagewebp(), но getimagesize()
+		// возвращает false (нет IMAGETYPE_WEBP) — иначе слайдер отдаёт пустой src.
+		$webp_gd = defined('IMAGETYPE_WEBP') && function_exists('imagecreatefromwebp');
+		if ($extension == 'svg' || ($extension == 'webp' && !$webp_gd)) {
 			$image_new = str_replace(' ', '%20', $filename);
 			if (!empty($this->request->server['HTTPS'])) {
 				return $this->config->get('config_ssl') . 'image/' . $image_new;
@@ -27,7 +29,11 @@ class ModelToolImage extends Model {
 			if (!is_file(DIR_IMAGE . $image_new) || (filectime(DIR_IMAGE . $image_old) > filectime(DIR_IMAGE . $image_new))) {
 				$image_info = @getimagesize(DIR_IMAGE . $image_old);
 				if ($image_info === false) {
-					return;
+					$image_new = str_replace(' ', '%20', $filename);
+					if (!empty($this->request->server['HTTPS'])) {
+						return $this->config->get('config_ssl') . 'image/' . $image_new;
+					}
+					return $this->config->get('config_url') . 'image/' . $image_new;
 				}
 
 				list($width_orig, $height_orig, $image_type) = $image_info;
@@ -38,7 +44,11 @@ class ModelToolImage extends Model {
 				}
 
 				if (!in_array($image_type, $allowed)) {
-					return;
+					$image_new = str_replace(' ', '%20', $filename);
+					if (!empty($this->request->server['HTTPS'])) {
+						return $this->config->get('config_ssl') . 'image/' . $image_new;
+					}
+					return $this->config->get('config_url') . 'image/' . $image_new;
 				}
 
 				$path = '';
