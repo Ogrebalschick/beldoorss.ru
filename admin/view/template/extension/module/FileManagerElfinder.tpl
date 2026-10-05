@@ -1,7 +1,8 @@
 <?php
 $elfinder_config = array(
-  'url' => isset($url_connector) ? $url_connector : '',
+  'url' => isset($url_connector) ? $url_connector : 'index.php?route=extension/module/FileManagerElfinder/connector',
   'baseUrl' => isset($base_url) ? $base_url : 'view/javascript/FileManagerElfinder/',
+  'token' => isset($token) ? $token : '',
   'multiple' => !empty($multiple),
   'target' => isset($target) ? $target : '',
   'thumb' => isset($thumb) ? $thumb : '',
@@ -18,7 +19,7 @@ $elfinder_config_attr = htmlspecialchars(json_encode($elfinder_config), ENT_QUOT
     </div>
     <div class="modal-body">
       <div class="elfinder">
-        <div id="elfinder" data-elfinder="<?php echo $elfinder_config_attr; ?>"></div>
+        <div id="elfinder" data-fm-config="<?php echo $elfinder_config_attr; ?>"></div>
       </div>
     </div>
   </div>

@@ -108,7 +108,8 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
     public function __construct($registry) {
         parent::__construct($registry);
 
-        $this->token = 'token=' . $this->session->data['token'];
+        $token = isset($this->session->data['token']) ? $this->session->data['token'] : '';
+        $this->token = 'token=' . $token;
 
         $this->load->model('extension/modification');
         $this->elfinder = $this->model_extension_modification->getModificationByCode($this->code);
@@ -148,8 +149,9 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
             $data['multiple'] = false;
         }
 
-        $data['url_connector'] = $this->getAdminBase() . 'index.php?route=extension/module/FileManagerElfinder/connector&' . $this->token;
+        $data['url_connector'] = 'index.php?route=extension/module/FileManagerElfinder/connector&token=' . (isset($this->session->data['token']) ? $this->session->data['token'] : '');
         $data['base_url'] = 'view/javascript/FileManagerElfinder/';
+        $data['token'] = isset($this->session->data['token']) ? $this->session->data['token'] : '';
 
         $this->response->setOutput($this->load->view('extension/module/FileManagerElfinder', $data));
     }
@@ -176,7 +178,7 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
     public function connector() {
         ini_set('display_errors', '0');
 
-        $base = $this->getCatalogBase();
+        $base = $this->getCatalogWebRoot();
         $tmb_path = DIR_IMAGE . 'cache/FileManagerElfinder';
         if (!is_dir($tmb_path)) {
             @mkdir($tmb_path, 0777, true);
@@ -320,9 +322,22 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
         $connector->run();
     }
 
+    private function decodeServerValue($key, $default = '') {
+        if (!isset($this->request->server[$key]) || $this->request->server[$key] === '') {
+            return $default;
+        }
+
+        return htmlspecialchars_decode($this->request->server[$key], ENT_QUOTES);
+    }
+
     private function isHttpsRequest() {
+        $forwarded = strtolower($this->decodeServerValue('HTTP_X_FORWARDED_PROTO'));
+        if ($forwarded === 'https') {
+            return true;
+        }
+
         if (empty($this->request->server['HTTPS'])) {
-            return false;
+            return ($this->decodeServerValue('SERVER_PORT') === '443');
         }
 
         $https = $this->request->server['HTTPS'];
@@ -334,11 +349,15 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
         return ($https === true || $https === 'on' || $https === '1' || $https === 1);
     }
 
-    private function getAdminBase() {
-        return $this->isHttpsRequest() ? HTTPS_SERVER : HTTP_SERVER;
-    }
+    private function getCatalogWebRoot() {
+        $script = str_replace('\\', '/', $this->decodeServerValue('SCRIPT_NAME', '/admin/index.php'));
+        $admin_dir = rtrim(dirname($script), '/');
+        $web_root = rtrim(str_replace('\\', '/', dirname($admin_dir)), '/');
 
-    private function getCatalogBase() {
-        return $this->isHttpsRequest() ? HTTPS_CATALOG : HTTP_CATALOG;
+        if ($web_root === '' || $web_root === '.' || $web_root === '\\') {
+            return '/';
+        }
+
+        return $web_root . '/';
     }
 }

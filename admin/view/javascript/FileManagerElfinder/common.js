@@ -22,6 +22,35 @@ function getURLVar(key) {
 	}
 }
 
+function beldoorssFmAsset(path) {
+	return path;
+}
+
+function beldoorssConnectorUrl(cfg) {
+	var token = getURLVar('token') || (cfg && cfg.token) || '';
+	var fallback = 'index.php?route=extension/module/FileManagerElfinder/connector&token=' + encodeURIComponent(token);
+	var url = (cfg && cfg.url) ? String(cfg.url) : fallback;
+
+	if (/^https?:\/\//i.test(url)) {
+		try {
+			var a = document.createElement('a');
+			a.href = url;
+			if (a.hostname && a.hostname !== window.location.hostname) {
+				return fallback;
+			}
+			url = a.pathname + a.search;
+		} catch (e) {
+			return fallback;
+		}
+	}
+
+	if (url.indexOf('token=') === -1 && token) {
+		url += (url.indexOf('?') === -1 ? '?' : '&') + 'token=' + encodeURIComponent(token);
+	}
+
+	return url || fallback;
+}
+
 function beldoorssLoadElfinder(callback) {
 	if ($.fn.elfinder) {
 		callback();
@@ -30,9 +59,9 @@ function beldoorssLoadElfinder(callback) {
 
 	if (!document.getElementById('elfinder-css-core')) {
 		var cssFiles = [
-			'view/javascript/jquery/jquery-ui/jquery-ui.min.css',
-			'view/javascript/FileManagerElfinder/css/elfinder.min.css',
-			'view/javascript/FileManagerElfinder/css/theme.css'
+			beldoorssFmAsset('view/javascript/jquery/jquery-ui/jquery-ui.min.css'),
+			beldoorssFmAsset('view/javascript/FileManagerElfinder/css/elfinder.min.css'),
+			beldoorssFmAsset('view/javascript/FileManagerElfinder/css/theme.css')
 		];
 		for (var c = 0; c < cssFiles.length; c++) {
 			var link = document.createElement('link');
@@ -45,11 +74,32 @@ function beldoorssLoadElfinder(callback) {
 		}
 	}
 
-	$.getScript('view/javascript/FileManagerElfinder/js/elfinder.min.js', function() {
-		$.getScript('view/javascript/FileManagerElfinder/js/i18n/elfinder.ru.js').always(function() {
+	$.getScript(beldoorssFmAsset('view/javascript/FileManagerElfinder/js/elfinder.min.js'), function() {
+		$.getScript(beldoorssFmAsset('view/javascript/FileManagerElfinder/js/i18n/elfinder.ru.js')).always(function() {
 			callback();
 		});
 	});
+}
+
+function beldoorssElfinderIsRendered($el) {
+	if (!$el || !$el.length) {
+		return false;
+	}
+	return $el.hasClass('elfinder') || $el.find('.elfinder-cwd, .elfinder-workzone, .elfinder-navbar').length > 0;
+}
+
+function beldoorssRetryElfinderIfEmpty() {
+	var $el = $('#modal-image #elfinder');
+	if (!$el.length || beldoorssElfinderIsRendered($el)) {
+		return;
+	}
+	$el.removeAttr('data-elfinder-inited');
+	try {
+		if ($.fn.elfinder && $el.hasClass('elfinder')) {
+			$el.elfinder('destroy');
+		}
+	} catch (e) {}
+	beldoorssInitElfinderModal(true);
 }
 
 function beldoorssOpenElfinderFromHtml(html) {
@@ -59,13 +109,23 @@ function beldoorssOpenElfinderFromHtml(html) {
 	$('body').append($modal);
 	$modal.one('shown.bs.modal', function() {
 		beldoorssInitElfinderModal();
+		window.setTimeout(beldoorssRetryElfinderIfEmpty, 300);
 	});
 	$modal.modal('show');
+	window.setTimeout(function() {
+		if ($('#modal-image').hasClass('in') || $('#modal-image').is(':visible')) {
+			beldoorssInitElfinderModal();
+		}
+		window.setTimeout(beldoorssRetryElfinderIfEmpty, 300);
+	}, 300);
 }
 
-function beldoorssInitElfinderModal() {
+function beldoorssInitElfinderModal(force) {
 	var $el = $('#modal-image #elfinder');
-	if (!$el.length || $el.data('elfinder-ready')) {
+	if (!$el.length) {
+		return;
+	}
+	if (!force && $el.attr('data-elfinder-inited') === '1' && beldoorssElfinderIsRendered($el)) {
 		return;
 	}
 
@@ -74,26 +134,45 @@ function beldoorssInitElfinderModal() {
 			return;
 		}
 
+		$el = $('#modal-image #elfinder');
+		if (!$el.length) {
+			return;
+		}
+		if (!force && $el.attr('data-elfinder-inited') === '1' && beldoorssElfinderIsRendered($el)) {
+			return;
+		}
+
 		var cfg = {};
 		try {
-			cfg = JSON.parse($el.attr('data-elfinder') || '{}');
+			cfg = JSON.parse($el.attr('data-fm-config') || '{}');
 		} catch (e) {
 			cfg = {};
 		}
 
 		var lang = ($('html').attr('lang') || 'en').split('-')[0];
-		$el.data('elfinder-ready', true);
+		var connectorUrl = beldoorssConnectorUrl(cfg);
 
 		if ($.fn.button && $.fn.button.noConflict) {
 			$.fn.btn = $.fn.button.noConflict();
 		}
 
+		try {
+			if ($el.hasClass('elfinder')) {
+				$el.elfinder('destroy');
+			}
+		} catch (e) {}
+
+		$el.attr('data-elfinder-inited', '1');
+
 		$el.elfinder({
 			cssAutoLoad: false,
-			baseUrl: cfg.baseUrl || 'view/javascript/FileManagerElfinder/',
-			url: cfg.url || '',
+			baseUrl: cfg.baseUrl || beldoorssFmAsset('view/javascript/FileManagerElfinder/'),
+			url: connectorUrl,
+			customData: {
+				token: cfg.token || getURLVar('token') || ''
+			},
 			lang: lang,
-			rememberLastDir: true,
+			rememberLastDir: false,
 			useBrowserHistory: false,
 			resizable: false,
 			height: 600,
