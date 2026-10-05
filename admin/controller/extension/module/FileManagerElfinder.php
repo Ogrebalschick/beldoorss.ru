@@ -149,9 +149,10 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
             $data['multiple'] = false;
         }
 
-        $data['url_connector'] = 'index.php?route=extension/module/FileManagerElfinder/connector&token=' . (isset($this->session->data['token']) ? $this->session->data['token'] : '');
+        $token = isset($this->session->data['token']) ? $this->session->data['token'] : '';
+        $data['token'] = $token;
+        $data['url_connector'] = str_replace('&amp;', '&', $this->url->link('extension/module/FileManagerElfinder/connector', 'token=' . $token, true));
         $data['base_url'] = 'view/javascript/FileManagerElfinder/';
-        $data['token'] = isset($this->session->data['token']) ? $this->session->data['token'] : '';
 
         $this->response->setOutput($this->load->view('extension/module/FileManagerElfinder', $data));
     }
@@ -178,7 +179,8 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
     public function connector() {
         ini_set('display_errors', '0');
 
-        $base = $this->getCatalogWebRoot();
+        $https = !empty($this->request->server['HTTPS']) && $this->request->server['HTTPS'] !== 'off';
+        $base = $https ? HTTPS_CATALOG : HTTP_CATALOG;
         $tmb_path = DIR_IMAGE . 'cache/FileManagerElfinder';
         if (!is_dir($tmb_path)) {
             @mkdir($tmb_path, 0777, true);
@@ -320,44 +322,5 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
 
         $connector = new elFinderConnector(new elFinder($opts));
         $connector->run();
-    }
-
-    private function decodeServerValue($key, $default = '') {
-        if (!isset($this->request->server[$key]) || $this->request->server[$key] === '') {
-            return $default;
-        }
-
-        return htmlspecialchars_decode($this->request->server[$key], ENT_QUOTES);
-    }
-
-    private function isHttpsRequest() {
-        $forwarded = strtolower($this->decodeServerValue('HTTP_X_FORWARDED_PROTO'));
-        if ($forwarded === 'https') {
-            return true;
-        }
-
-        if (empty($this->request->server['HTTPS'])) {
-            return ($this->decodeServerValue('SERVER_PORT') === '443');
-        }
-
-        $https = $this->request->server['HTTPS'];
-
-        if ($https === 'off' || $https === 'Off' || $https === '0' || $https === 0) {
-            return false;
-        }
-
-        return ($https === true || $https === 'on' || $https === '1' || $https === 1);
-    }
-
-    private function getCatalogWebRoot() {
-        $script = str_replace('\\', '/', $this->decodeServerValue('SCRIPT_NAME', '/admin/index.php'));
-        $admin_dir = rtrim(dirname($script), '/');
-        $web_root = rtrim(str_replace('\\', '/', dirname($admin_dir)), '/');
-
-        if ($web_root === '' || $web_root === '.' || $web_root === '\\') {
-            return '/';
-        }
-
-        return $web_root . '/';
     }
 }

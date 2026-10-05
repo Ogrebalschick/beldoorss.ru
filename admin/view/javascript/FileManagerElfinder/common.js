@@ -28,27 +28,10 @@ function beldoorssFmAsset(path) {
 
 function beldoorssConnectorUrl(cfg) {
 	var token = getURLVar('token') || (cfg && cfg.token) || '';
-	var fallback = 'index.php?route=extension/module/FileManagerElfinder/connector&token=' + encodeURIComponent(token);
-	var url = (cfg && cfg.url) ? String(cfg.url) : fallback;
-
-	if (/^https?:\/\//i.test(url)) {
-		try {
-			var a = document.createElement('a');
-			a.href = url;
-			if (a.hostname && a.hostname !== window.location.hostname) {
-				return fallback;
-			}
-			url = a.pathname + a.search;
-		} catch (e) {
-			return fallback;
-		}
+	if (cfg && cfg.url) {
+		return String(cfg.url).replace(/&amp;/g, '&');
 	}
-
-	if (url.indexOf('token=') === -1 && token) {
-		url += (url.indexOf('?') === -1 ? '?' : '&') + 'token=' + encodeURIComponent(token);
-	}
-
-	return url || fallback;
+	return 'index.php?route=extension/module/FileManagerElfinder/connector&token=' + encodeURIComponent(token);
 }
 
 function beldoorssLoadElfinder(callback) {

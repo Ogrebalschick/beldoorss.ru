@@ -61,6 +61,8 @@
         <?php echo $analytic; ?>
     <?php } ?>
     <link href="catalog/view/theme/moneymaker2/stylesheet/general.css" rel="stylesheet">
+    <link href="catalog/view/theme/moneymaker2/stylesheet/style_new.css" rel="stylesheet">
+    <link href="catalog/view/theme/moneymaker2/stylesheet/style_media.css" rel="stylesheet">
 
     <?php if (isset($class)) { ?>
       <?php if (strpos($class, 'common-home') !== false) { ?>
