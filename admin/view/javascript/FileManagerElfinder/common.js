@@ -29,7 +29,13 @@ function beldoorssFmAsset(path) {
 function beldoorssConnectorUrl(cfg) {
 	var token = getURLVar('token') || (cfg && cfg.token) || '';
 	if (cfg && cfg.url) {
-		return String(cfg.url).replace(/&amp;/g, '&');
+		var url = String(cfg.url).replace(/&amp;/g, '&');
+		url = url.replace(/^[a-z]+:\/\/[^/]+/i, '');
+		url = url.replace(/^\/admin\//, '');
+		if (url.charAt(0) === '/') {
+			url = url.replace(/^\//, '');
+		}
+		return url;
 	}
 	return 'index.php?route=extension/module/FileManagerElfinder/connector&token=' + encodeURIComponent(token);
 }

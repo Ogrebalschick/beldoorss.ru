@@ -22,10 +22,8 @@ class ControllerCommonFileManager extends Controller {
 	public function index() {
 		$this->load->language('common/filemanager');
 
-		// Find which protocol to use to pass the full image link back
-		// Не использовать truthy-проверку: Apache часто отдаёт HTTPS=off, а PHP считает непустую строку истиной.
-		$https = !empty($this->request->server['HTTPS']) && $this->request->server['HTTPS'] !== 'off';
-		$server = $https ? HTTPS_CATALOG : HTTP_CATALOG;
+		// Корневой относительный путь: не зависит от HTTP_CATALOG / локального config.php
+		$server = '/';
 
 		if (isset($this->request->get['filter_name'])) {
 			$filter_name = rtrim(str_replace('*', '', $this->request->get['filter_name']), '/');

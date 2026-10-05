@@ -151,7 +151,7 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
 
         $token = isset($this->session->data['token']) ? $this->session->data['token'] : '';
         $data['token'] = $token;
-        $data['url_connector'] = str_replace('&amp;', '&', $this->url->link('extension/module/FileManagerElfinder/connector', 'token=' . $token, true));
+        $data['url_connector'] = 'index.php?route=extension/module/FileManagerElfinder/connector&token=' . $token;
         $data['base_url'] = 'view/javascript/FileManagerElfinder/';
 
         $this->response->setOutput($this->load->view('extension/module/FileManagerElfinder', $data));
@@ -179,8 +179,6 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
     public function connector() {
         ini_set('display_errors', '0');
 
-        $https = !empty($this->request->server['HTTPS']) && $this->request->server['HTTPS'] !== 'off';
-        $base = $https ? HTTPS_CATALOG : HTTP_CATALOG;
         $tmb_path = DIR_IMAGE . 'cache/FileManagerElfinder';
         if (!is_dir($tmb_path)) {
             @mkdir($tmb_path, 0777, true);
@@ -296,8 +294,8 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
                 [
                     'driver'        => 'LocalFileSystem',
                     'path'          => DIR_IMAGE. 'catalog/',  
-                    'URL'           => $base . 'image/catalog/',
-                    'tmbURL'        => $base . 'image/cache/FileManagerElfinder/',
+                    'URL'           => '/image/catalog/',
+                    'tmbURL'        => '/image/cache/FileManagerElfinder/',
                     'tmbPath'       => DIR_IMAGE . 'cache/FileManagerElfinder',
                     'tmbSize' => 100,
                     'copyJoin'      => false,

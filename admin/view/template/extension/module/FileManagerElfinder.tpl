@@ -1,6 +1,6 @@
 <?php
 $elfinder_config = array(
-  'url' => isset($url_connector) ? $url_connector : 'index.php?route=extension/module/FileManagerElfinder/connector',
+  'url' => 'index.php?route=extension/module/FileManagerElfinder/connector' . (isset($token) && $token !== '' ? '&token=' . $token : ''),
   'baseUrl' => isset($base_url) ? $base_url : 'view/javascript/FileManagerElfinder/',
   'token' => isset($token) ? $token : '',
   'multiple' => !empty($multiple),
