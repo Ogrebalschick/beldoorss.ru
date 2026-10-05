@@ -12,8 +12,7 @@ function ckeditorInit(node, token) {
             url: 'index.php?route=extension/module/FileManagerElfinder/manager&ckeditor=' + this.filebrowser.target + '&token=' + token,
             dataType: 'html',
             success: function(html) {
-              $('body').append('<div class="modal ckeditor" id="modal-image">' + html + '</div>');
-              $('#modal-image').modal('show');
+              beldoorssOpenElfinderFromHtml(html);
             }
           });
         }

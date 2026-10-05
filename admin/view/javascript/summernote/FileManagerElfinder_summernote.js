@@ -46,17 +46,7 @@ $(document).ready(function() {
                   $('#button-image').prop('disabled', false);
                 },
                 success: function(html) {
-                  $('body').append('<div id="modal-image" class="modal">' + html + '</div>');
-                  
-                  $('#modal-image').modal('show');
-                  
-                  $('#modal-image').delegate('a.thumbnail', 'click', function(e) {
-                    e.preventDefault();
-                    
-                    $(element).summernote('insertImage', $(this).attr('href'));
-                                  
-                    $('#modal-image').modal('hide');
-                  });
+                  beldoorssOpenElfinderFromHtml(html);
                 }
               });           
             }

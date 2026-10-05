@@ -22,6 +22,134 @@ function getURLVar(key) {
 	}
 }
 
+function beldoorssLoadElfinder(callback) {
+	if ($.fn.elfinder) {
+		callback();
+		return;
+	}
+
+	if (!document.getElementById('elfinder-css-core')) {
+		var cssFiles = [
+			'view/javascript/jquery/jquery-ui/jquery-ui.min.css',
+			'view/javascript/FileManagerElfinder/css/elfinder.min.css',
+			'view/javascript/FileManagerElfinder/css/theme.css'
+		];
+		for (var c = 0; c < cssFiles.length; c++) {
+			var link = document.createElement('link');
+			link.rel = 'stylesheet';
+			link.href = cssFiles[c];
+			if (c === 0) {
+				link.id = 'elfinder-css-core';
+			}
+			document.head.appendChild(link);
+		}
+	}
+
+	$.getScript('view/javascript/FileManagerElfinder/js/elfinder.min.js', function() {
+		$.getScript('view/javascript/FileManagerElfinder/js/i18n/elfinder.ru.js').always(function() {
+			callback();
+		});
+	});
+}
+
+function beldoorssOpenElfinderFromHtml(html) {
+	var nodes = $.parseHTML(html, document, false);
+	var $modal = $('<div id="modal-image" class="modal"></div>');
+	$modal.append(nodes);
+	$('body').append($modal);
+	$modal.one('shown.bs.modal', function() {
+		beldoorssInitElfinderModal();
+	});
+	$modal.modal('show');
+}
+
+function beldoorssInitElfinderModal() {
+	var $el = $('#modal-image #elfinder');
+	if (!$el.length || $el.data('elfinder-ready')) {
+		return;
+	}
+
+	beldoorssLoadElfinder(function() {
+		if (!$.fn.elfinder) {
+			return;
+		}
+
+		var cfg = {};
+		try {
+			cfg = JSON.parse($el.attr('data-elfinder') || '{}');
+		} catch (e) {
+			cfg = {};
+		}
+
+		var lang = ($('html').attr('lang') || 'en').split('-')[0];
+		$el.data('elfinder-ready', true);
+
+		if ($.fn.button && $.fn.button.noConflict) {
+			$.fn.btn = $.fn.button.noConflict();
+		}
+
+		$el.elfinder({
+			cssAutoLoad: false,
+			baseUrl: cfg.baseUrl || 'view/javascript/FileManagerElfinder/',
+			url: cfg.url || '',
+			lang: lang,
+			rememberLastDir: true,
+			useBrowserHistory: false,
+			resizable: false,
+			height: 600,
+			commandsOptions: {
+				getfile: {
+					multiple: !!cfg.multiple,
+					onlyURL: false
+				}
+			},
+			closeOnEditorCallback: true,
+			getFileCallback: function(fileOrFiles, fm) {
+				function applyFile(file, first) {
+					if (!file) {
+						return;
+					}
+					var path = (file.path || '').replace(/\\\\/g, '/').replace(/\\/g, '/');
+					if (first && cfg.target) {
+						$('#' + cfg.target).val(path);
+					}
+					if (first && cfg.thumb) {
+						$('#' + cfg.thumb).html('<img src="' + file.tmb + '">');
+					}
+					if (cfg.summernote && file.url) {
+						if (file.mime == 'video/mp4') {
+							$('#' + cfg.summernote).summernote('pasteHTML', '<div class="summernote-html5-video"><video controls="" name="media" style="height:auto; max-width:100%"><source src="' + file.url + '" type="video/mp4"></video></div>');
+						} else if ($('#' + cfg.summernote).length) {
+							$('#' + cfg.summernote).summernote('insertImage', file.url);
+						}
+					}
+					if (cfg.ckeditor && file.url && window.CKEDITOR && CKEDITOR.dialog.getCurrent()) {
+						var cke_target = String(cfg.ckeditor).split(':');
+						CKEDITOR.dialog.getCurrent().setValueOf(cke_target[0], cke_target[1], file.url);
+					}
+				}
+
+				if (cfg.multiple && $.isArray(fileOrFiles)) {
+					var firstApplied = false;
+					$.each(fileOrFiles, function(item, file) {
+						if (file.read && file.hash) {
+							applyFile(file, !firstApplied);
+							firstApplied = true;
+						}
+					});
+				} else {
+					applyFile(fileOrFiles, true);
+				}
+
+				$('#modal-image').modal('hide');
+				if (fm && fm.hide) {
+					fm.hide();
+				}
+			}
+		});
+	});
+}
+
 $(document).ready(function() {
 	//Form Submit for IE Browser
 	$('button[type=\'submit\']').on('click', function() {
@@ -144,7 +272,7 @@ $(document).ready(function() {
 			$('#modal-image').remove();
 
 			$.ajax({
-				url: 'index.php?route=extension/module/FileManagerElfinder/manager&token=' + getURLVar('token') + '&target=' + $element.parent().find('input').attr('id') + '&thumb=' + $element.attr('id') + $multiple,
+				url: 'index.php?route=extension/module/FileManagerElfinder/manager&token=' + getURLVar('token') + '&target=' + encodeURIComponent($element.parent().find('input').attr('id') || '') + '&thumb=' + encodeURIComponent($element.attr('id') || '') + $multiple,
 				dataType: 'html',
 				beforeSend: function() {
 					$button.prop('disabled', true);
@@ -159,9 +287,7 @@ $(document).ready(function() {
 					}
 				},
 				success: function(html) {
-					$('body').append('<div id="modal-image" class="modal">' + html + '</div>');
-
-					$('#modal-image').modal('show');
+					beldoorssOpenElfinderFromHtml(html);
 				}
 			});
 

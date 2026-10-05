@@ -115,6 +115,8 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
     }
 
     public function manager() {
+        ini_set('display_errors', '0');
+
         $this->load->language('extension/module/FileManagerElfinder');
         $data['heading_title'] = $this->language->get('heading_title');
 
@@ -146,19 +148,13 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
             $data['multiple'] = false;
         }
 
-        if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
-            $base = HTTPS_SERVER;
-        } else {
-            $base = HTTP_SERVER;
-        }
-
-        $data['url_connector'] = $base . 'index.php?route=extension/module/FileManagerElfinder/connector&' . $this->token;
+        $data['url_connector'] = $this->getAdminBase() . 'index.php?route=extension/module/FileManagerElfinder/connector&' . $this->token;
         $data['base_url'] = 'view/javascript/FileManagerElfinder/';
 
         $this->response->setOutput($this->load->view('extension/module/FileManagerElfinder', $data));
     }
 
-    public function access($attr, $path, $data, $volume, $isDir, $relpath) {
+    public function access($attr, $path, $data, $volume, $isDir = null, $relpath = '') {
         $basename = basename($path);
         return $basename[0] === '.'
         && strlen($relpath) !== 1 
@@ -178,13 +174,14 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
     }
 
     public function connector() {
+        ini_set('display_errors', '0');
 
-        if (isset($this->request->server['HTTPS']) && (($this->request->server['HTTPS'] == 'on') || ($this->request->server['HTTPS'] == '1'))) {
-            $base = HTTPS_CATALOG;
-        } else {
-            $base = HTTP_CATALOG;
+        $base = $this->getCatalogBase();
+        $tmb_path = DIR_IMAGE . 'cache/FileManagerElfinder';
+        if (!is_dir($tmb_path)) {
+            @mkdir($tmb_path, 0777, true);
         }
-        
+
         is_readable(DIR_SYSTEM . 'library/vendor/FileManagerElfinder/php/autoload.php') && require_once DIR_SYSTEM . 'library/vendor/FileManagerElfinder/php/autoload.php';
         elFinder::$netDrivers['ftp'] = 'FTP';
         $opts = [
@@ -312,7 +309,7 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
                         'image/gif'
                     ],
                     'uploadOrder'   => ['deny', 'allow'],
-                    'accessControl' => 'access',
+                    'accessControl' => array($this, 'access'),
                     'tmbGcMaxlifeHour' => 1,
                     'tmbGcPercentage'  => 10,
                 ]
@@ -321,5 +318,27 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
 
         $connector = new elFinderConnector(new elFinder($opts));
         $connector->run();
+    }
+
+    private function isHttpsRequest() {
+        if (empty($this->request->server['HTTPS'])) {
+            return false;
+        }
+
+        $https = $this->request->server['HTTPS'];
+
+        if ($https === 'off' || $https === 'Off' || $https === '0' || $https === 0) {
+            return false;
+        }
+
+        return ($https === true || $https === 'on' || $https === '1' || $https === 1);
+    }
+
+    private function getAdminBase() {
+        return $this->isHttpsRequest() ? HTTPS_SERVER : HTTP_SERVER;
+    }
+
+    private function getCatalogBase() {
+        return $this->isHttpsRequest() ? HTTPS_CATALOG : HTTP_CATALOG;
     }
 }

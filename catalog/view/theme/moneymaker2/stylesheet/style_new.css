@@ -411,6 +411,30 @@ header #cart .dropdown-menu {
     opacity: .5
 }
 
+.home-content-bottom {
+    margin: 0 0 50px
+}
+
+.home-content-bottom .brands-carousel {
+    padding: 10px 40px
+}
+
+.home-content-bottom .brands-carousel .item {
+    padding: 8px 16px
+}
+
+.home-content-bottom .brands-carousel .item img {
+    max-height: 72px;
+    width: auto;
+    margin: 0 auto;
+    opacity: .75;
+    transition: opacity .2s
+}
+
+.home-content-bottom .brands-carousel .item a:hover img {
+    opacity: 1
+}
+
 .maincategories {
     margin-bottom: 80px
 }

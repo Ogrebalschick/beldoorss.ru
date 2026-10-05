@@ -190,26 +190,14 @@
             </div>
         </div>
 </section>
-    <section class="brends" itemscope itemtype="https://schema.org/Brand">
+    <?php /* Слот макета Home → «Низ страницы» (content_bottom): карусель брендов и прочие модули под плитками категорий. */ ?>
+    <?php if ($content_bottom) { ?>
+    <section class="brends home-content-bottom" itemscope itemtype="https://schema.org/Brand">
         <div class="container">
-            <div class="brends__inner">
-                <div class="brends__list__wrapper">
-                    <ul class="brends__list">
-                        <li itemprop="name"><a href="/vhodnye-dveri/p_beldoorss/">Beldoorss</a></li>
-                        <li itemprop="name"><a href="/vhodnye-dveri/viral-doors/">Viral</a></li>
-                        <li itemprop="name"><a href="/vhodnye-dveri/metaluks/">МетаЛюкс</a></li>
-                        <li itemprop="name"><a href="/mezhkomnatnye-dveri/porte_vista/">PorteVista</a></li>
-                        <li itemprop="name"><a href="/vhodnye-dveri/labirint-doors/">Лабиринт</a></li>
-                        <li itemprop="name"><a href="/dvernaya-furnitura/">Morelli</a></li>
-                        <li itemprop="name"><a href="/mezhkomnatnye-dveri/manufacturer-mejkomnatnie/dveri-oka/">Oka</a></li>
-                        <li itemprop="name"><a href="/mezhkomnatnye-dveri/manufacturer-mejkomnatnie/regidoors/">Regidoors</a></li>
-                        <li itemprop="name"><a href="/mezhkomnatnye-dveri/manufacturer-mejkomnatnie/uberture/">Uberture</a></li>
-                        <li itemprop="name"><a href="/mezhkomnatnye-dveri/p_belwooddoors/">Belwooddoors</a></li>
-                    </ul>
-                </div>
-            </div>
+            <?php echo $content_bottom; ?>
         </div>
     </section>
+    <?php } ?>
 </main>
 <?php /*
 {{!--<div class="container">
@@ -291,7 +279,7 @@
         </div>
         <?php } ?>
       <?php } ?>
-      <?php echo $content_bottom; ?></div>
+      </div>
     <?php echo $column_right; ?></div>
 </div>
 </div>

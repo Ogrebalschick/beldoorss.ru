@@ -22,6 +22,7 @@ define('DIR_CACHE',       DIR_STORAGE . 'cache/');
 define('DIR_DOWNLOAD',    DIR_STORAGE . 'download/');
 define('DIR_LOGS',        DIR_STORAGE . 'logs/');
 define('DIR_MODIFICATION', DIR_STORAGE . 'modification/');
+define('DIR_SESSION',     DIR_STORAGE . 'session/');
 define('DIR_UPLOAD',      DIR_STORAGE . 'upload/');
 
 // DB
