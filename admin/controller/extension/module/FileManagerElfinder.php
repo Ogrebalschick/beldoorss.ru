@@ -158,9 +158,12 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
     }
 
     public function access($attr, $path, $data, $volume, $isDir = null, $relpath = '') {
-        $basename = basename($path);
+        $basename = basename((string)$path);
+        if ($basename === '' || !isset($basename[0])) {
+            return null;
+        }
         return $basename[0] === '.'
-        && strlen($relpath) !== 1 
+        && strlen((string)$relpath) !== 1
             ? !($attr == 'read' || $attr == 'write')
             :  null;
     }
@@ -177,14 +180,36 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
     }
 
     public function connector() {
+        error_reporting(0);
         ini_set('display_errors', '0');
 
-        $tmb_path = DIR_IMAGE . 'cache/FileManagerElfinder';
-        if (!is_dir($tmb_path)) {
-            @mkdir($tmb_path, 0777, true);
+        while (ob_get_level() > 0) {
+            @ob_end_clean();
         }
 
-        is_readable(DIR_SYSTEM . 'library/vendor/FileManagerElfinder/php/autoload.php') && require_once DIR_SYSTEM . 'library/vendor/FileManagerElfinder/php/autoload.php';
+        if (!headers_sent()) {
+            header('Content-Type: application/json; charset=utf-8');
+            header('X-Content-Type-Options: nosniff');
+        }
+
+        $image_root = rtrim(DIR_IMAGE, '/\\') . '/';
+        $catalog_path = $image_root . 'catalog/';
+        $tmb_path = $image_root . 'cache/FileManagerElfinder';
+
+        if (!is_dir($catalog_path)) {
+            @mkdir($catalog_path, 0755, true);
+        }
+        if (!is_dir($tmb_path)) {
+            @mkdir($tmb_path, 0755, true);
+        }
+
+        $autoload = DIR_SYSTEM . 'library/vendor/FileManagerElfinder/php/autoload.php';
+        if (!is_readable($autoload)) {
+            echo json_encode(array('error' => array('errConf')));
+            exit();
+        }
+        require_once $autoload;
+
         elFinder::$netDrivers['ftp'] = 'FTP';
         $opts = [
             'bind' => [
@@ -293,10 +318,10 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
             'roots' => [
                 [
                     'driver'        => 'LocalFileSystem',
-                    'path'          => DIR_IMAGE. 'catalog/',  
+                    'path'          => $catalog_path,
                     'URL'           => '/image/catalog/',
                     'tmbURL'        => '/image/cache/FileManagerElfinder/',
-                    'tmbPath'       => DIR_IMAGE . 'cache/FileManagerElfinder',
+                    'tmbPath'       => $tmb_path,
                     'tmbSize' => 100,
                     'copyJoin'      => false,
                     'winHashFix'    => DIRECTORY_SEPARATOR !== '/',
@@ -320,5 +345,6 @@ class ControllerExtensionModuleFileManagerElfinder extends Controller {
 
         $connector = new elFinderConnector(new elFinder($opts));
         $connector->run();
+        exit();
     }
 }
