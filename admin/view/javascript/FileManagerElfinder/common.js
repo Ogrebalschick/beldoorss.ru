@@ -22,22 +22,45 @@ function getURLVar(key) {
 	}
 }
 
-function beldoorssFmAsset(path) {
-	return path;
+function beldoorssAdminToken(cfg) {
+	var token = getURLVar('token') || (cfg && cfg.token) || '';
+	return token ? String(token) : '';
+}
+
+function beldoorssAdminIndexUrl() {
+	var loc = window.location;
+	var path = loc.pathname || '/admin/index.php';
+	var idx = path.toLowerCase().lastIndexOf('index.php');
+	if (idx !== -1) {
+		path = path.substring(0, idx + 9);
+	} else {
+		path = path.replace(/\/?$/, '/') + 'index.php';
+	}
+	return loc.protocol + '//' + loc.host + path;
 }
 
 function beldoorssConnectorUrl(cfg) {
-	var token = getURLVar('token') || (cfg && cfg.token) || '';
-	if (cfg && cfg.url) {
-		var url = String(cfg.url).replace(/&amp;/g, '&');
-		url = url.replace(/^[a-z]+:\/\/[^/]+/i, '');
-		url = url.replace(/^\/admin\//, '');
-		if (url.charAt(0) === '/') {
-			url = url.replace(/^\//, '');
-		}
-		return url;
+	var token = beldoorssAdminToken(cfg);
+	var url = beldoorssAdminIndexUrl() + '?route=extension/module/FileManagerElfinder/connector';
+	if (token) {
+		url += '&token=' + encodeURIComponent(token);
 	}
-	return 'index.php?route=extension/module/FileManagerElfinder/connector&token=' + encodeURIComponent(token);
+	return url;
+}
+
+function beldoorssFmAsset(path) {
+	var loc = window.location;
+	var dir = loc.pathname || '/admin/';
+	var idx = dir.toLowerCase().lastIndexOf('index.php');
+	if (idx !== -1) {
+		dir = dir.substring(0, idx);
+	} else if (dir.slice(-1) !== '/') {
+		dir = dir.replace(/[^/]+$/, '');
+	}
+	if (dir.slice(-1) !== '/') {
+		dir += '/';
+	}
+	return loc.protocol + '//' + loc.host + dir + path.replace(/^\//, '');
 }
 
 function beldoorssLoadElfinder(callback) {
@@ -139,6 +162,7 @@ function beldoorssInitElfinderModal(force) {
 		}
 
 		var lang = ($('html').attr('lang') || 'en').split('-')[0];
+		var token = beldoorssAdminToken(cfg);
 		var connectorUrl = beldoorssConnectorUrl(cfg);
 
 		if ($.fn.button && $.fn.button.noConflict) {
@@ -157,8 +181,16 @@ function beldoorssInitElfinderModal(force) {
 			cssAutoLoad: false,
 			baseUrl: cfg.baseUrl || beldoorssFmAsset('view/javascript/FileManagerElfinder/'),
 			url: connectorUrl,
+			urlUpload: connectorUrl,
+			requestType: 'get',
 			customData: {
-				token: cfg.token || getURLVar('token') || ''
+				token: token
+			},
+			customHeaders: {
+				'X-Requested-With': 'XMLHttpRequest'
+			},
+			xhrFields: {
+				withCredentials: true
 			},
 			lang: lang,
 			rememberLastDir: false,
@@ -340,8 +372,9 @@ $(document).ready(function() {
 			$('#modal-image').remove();
 
 			$.ajax({
-				url: 'index.php?route=extension/module/FileManagerElfinder/manager&token=' + getURLVar('token') + '&target=' + encodeURIComponent($element.parent().find('input').attr('id') || '') + '&thumb=' + encodeURIComponent($element.attr('id') || '') + $multiple,
+				url: beldoorssAdminIndexUrl() + '?route=extension/module/FileManagerElfinder/manager&token=' + encodeURIComponent(getURLVar('token') || '') + '&target=' + encodeURIComponent($element.parent().find('input').attr('id') || '') + '&thumb=' + encodeURIComponent($element.attr('id') || '') + $multiple,
 				dataType: 'html',
+				xhrFields: { withCredentials: true },
 				beforeSend: function() {
 					$button.prop('disabled', true);
 					if ($icon.length) {

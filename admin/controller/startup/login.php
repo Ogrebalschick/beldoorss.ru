@@ -1,6 +1,10 @@
 <?php
 class ControllerStartupLogin extends Controller {
 	public function index() {
+		if ((!isset($this->request->get['token']) || $this->request->get['token'] === '') && !empty($this->request->post['token'])) {
+			$this->request->get['token'] = $this->request->post['token'];
+		}
+
 		$route = isset($this->request->get['route']) ? $this->request->get['route'] : '';
 
 		$ignore = array(
