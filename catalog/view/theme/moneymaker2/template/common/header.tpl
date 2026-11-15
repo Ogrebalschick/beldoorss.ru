@@ -22,12 +22,33 @@
     
 
 </style>
+<?php
+  if (!function_exists('mm2_css')) {
+    function mm2_css($href) {
+      $path = strtok($href, '?');
+      $file = DIR_APPLICATION . substr($path, strlen('catalog/'));
+      $version = is_file($file) ? filemtime($file) : 0;
+
+      return $path . '?v=' . $version;
+    }
+  }
+  $mm2_css_bundle = 0;
+  if (!empty($moneymaker2_minify['int_css'])) {
+    foreach ($moneymaker2_minify['int_css'] as $mm2_href) {
+      $mm2_path = strtok($mm2_href, '?');
+      $mm2_file = DIR_APPLICATION . substr($mm2_path, strlen('catalog/'));
+      if (is_file($mm2_file)) {
+        $mm2_css_bundle = max($mm2_css_bundle, filemtime($mm2_file));
+      }
+    }
+  }
+?>
 <?php if ($moneymaker2_common_minify) { ?>
   <?php foreach ($moneymaker2_minify['ext_css'] as $value) { ?>
   <link href="<?php echo $value['href']; ?>" type="text/css" rel="<?php echo $value['rel']; ?>" media="<?php echo $value['media']; ?>" />
   <?php } ?>
-  <link href="min/?g=moneymaker2_css<?php echo $moneymaker2_minify['int_css'] ? "&f=".implode(',', $moneymaker2_minify['int_css']) : ''; ?>&v=271" rel="preload" as="style">
-  <link href="min/?g=moneymaker2_css<?php echo $moneymaker2_minify['int_css'] ? "&f=".implode(',', $moneymaker2_minify['int_css']) : ''; ?>&v=271" rel="stylesheet">
+  <link href="min/?g=moneymaker2_css<?php echo $moneymaker2_minify['int_css'] ? "&f=".implode(',', $moneymaker2_minify['int_css']) : ''; ?>&v=<?php echo $mm2_css_bundle; ?>" rel="preload" as="style">
+  <link href="min/?g=moneymaker2_css<?php echo $moneymaker2_minify['int_css'] ? "&f=".implode(',', $moneymaker2_minify['int_css']) : ''; ?>&v=<?php echo $mm2_css_bundle; ?>" rel="stylesheet">
   <?php foreach ($links as $link) { ?>
   <link href="<?php echo $link['href']; ?>" rel="<?php echo $link['rel']; ?>" />
   <?php } ?>
@@ -60,40 +81,40 @@
     <?php foreach ($analytics as $analytic) { ?>
         <?php echo $analytic; ?>
     <?php } ?>
-    <link href="catalog/view/theme/moneymaker2/stylesheet/general.css" rel="stylesheet">
-    <link href="catalog/view/theme/moneymaker2/stylesheet/style_new.css" rel="stylesheet">
-    <link href="catalog/view/theme/moneymaker2/stylesheet/style_media.css" rel="stylesheet">
+    <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/general.css'); ?>" rel="stylesheet">
+    <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/style_new.css'); ?>" rel="stylesheet">
+    <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/style_media.css'); ?>" rel="stylesheet">
 
     <?php if (isset($class)) { ?>
       <?php if (strpos($class, 'common-home') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/home.css" rel="stylesheet">
+        <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/pages/home.css'); ?>" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'product-category') !== false || strpos($class, 'product-manufacturer') !== false || strpos($class, 'product-search') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/catalog.css" rel="stylesheet">
+        <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/pages/catalog.css'); ?>" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'product-category') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/category.css" rel="stylesheet">
+        <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/pages/category.css'); ?>" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'product-manufacturer') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/manufacturer.css" rel="stylesheet">
+        <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/pages/manufacturer.css'); ?>" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'product-search') !== false) { ?>
 
         <?php } ?>
       <?php if (strpos($class, 'product-compare') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/compare.css" rel="stylesheet">
+        <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/pages/compare.css'); ?>" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'product-product') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/product.css" rel="stylesheet">
+        <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/pages/product.css'); ?>" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'checkout-') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/checkout.css" rel="stylesheet">
+        <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/pages/checkout.css'); ?>" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'account-') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/accounting.css" rel="stylesheet">
+        <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/pages/accounting.css'); ?>" rel="stylesheet">
       <?php } ?>
       <?php if (strpos($class, 'information-') !== false) { ?>
-        <link href="catalog/view/theme/moneymaker2/stylesheet/pages/information.css" rel="stylesheet">
+        <link href="<?php echo mm2_css('catalog/view/theme/moneymaker2/stylesheet/pages/information.css'); ?>" rel="stylesheet">
       <?php } ?>
     <?php } ?>
 </head>
