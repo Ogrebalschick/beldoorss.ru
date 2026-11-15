@@ -73,9 +73,17 @@ const OCF_PREFIX = 'ocf';
     
     this.options = $.extend({}, OCFilter.DEFAULTS, options);
     
-    // Set host
+    // Set host. <base href> follows config_ssl, which can stay http on an https vitrine.
     if ($isSet('base') && $('base').attr('href').length) {
       this.options.urlHost = $('base').attr('href');
+    }
+
+    if (window.location.protocol === 'https:' && this.options.urlHost && this.options.urlHost.indexOf('http://') === 0) {
+      this.options.urlHost = 'https://' + this.options.urlHost.substring('http://'.length);
+    }
+
+    if (this.options.urlHost && this.options.urlHost.slice(-1) !== '/') {
+      this.options.urlHost += '/';
     }    
     
     this.paramsDecodeCache = {};

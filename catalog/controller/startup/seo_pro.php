@@ -308,6 +308,11 @@ class ControllerStartupSeoPro extends Controller {
 			$this->request->get['route'] = 'common/home';
 		}
 
+		// OCFilter search/counters must not be canonicalized into a filter SEO alias.
+		if (!empty($this->request->get['route']) && strpos($this->request->get['route'], 'extension/module/ocfilter/') === 0) {
+			return;
+		}
+
 		if (isset($this->request->server['HTTP_X_REQUESTED_WITH']) && strtolower($this->request->server['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
 			return;
 		}

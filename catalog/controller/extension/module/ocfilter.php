@@ -281,7 +281,7 @@ class ControllerExtensionModuleOCFilter extends Controller {
     // Output   
     $data['stylesheet'] = $this->ocfilter->helper->getRenderedStyle();  
     
-    $data['javascript'] = 'catalog/view/javascript/ocfilter48/ocfilter.js?v=' . OCF_VERSION;
+    $data['javascript'] = 'catalog/view/javascript/ocfilter48/ocfilter.js?v=' . OCF_VERSION . '.1';
        
     $this->outputDebug($data);
 

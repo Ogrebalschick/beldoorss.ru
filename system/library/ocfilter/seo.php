@@ -306,6 +306,18 @@ class Seo extends Factory {
       return $link;
     }
 
+    // AJAX endpoints must stay on index.php. Rewriting them drops the category
+    // path and turns the filter alias into the whole URL (/alias, then /alias/alias).
+    if (!empty($data['route']) && strpos($data['route'], 'extension/module/ocfilter/') === 0) {
+      return $link;
+    }
+
+    // SeoPro has not built the category path yet. Keep the query string:
+    // stripping index.php here leaves only the filter keyword at the site root.
+    if (isset($url_info['path']) && strpos($url_info['path'], 'index.php') !== false) {
+      return $link;
+    }
+
     $cache_key = md5($link);
 
     if (isset($this->rewrite_cache[$cache_key])) {
@@ -364,9 +376,16 @@ class Seo extends Factory {
       }
     }
 
-    if ($this->isSeoUrlEnabled()) {
-      // Set URL keyword and suffix
-      $url = rtrim($url, '/') . '/' . $page_info['keyword'] . $this->getUrlSuffix($url);
+    if ($this->isSeoUrlEnabled() && !empty($page_info['keyword'])) {
+      $keyword = trim($page_info['keyword'], '/');
+      $current_path = isset($url_info['path']) ? $url_info['path'] : '';
+      $segments = array_values(array_filter(explode('/', $current_path), 'strlen'));
+      $last = $segments ? $segments[count($segments) - 1] : '';
+
+      // Category path is already in $url. Append the alias once.
+      if ($keyword !== '' && $last !== $keyword) {
+        $url = rtrim($url, '/') . '/' . $keyword . $this->getUrlSuffix($url);
+      }
     }
 
     $query = '';
@@ -442,7 +461,14 @@ class Seo extends Factory {
       $link = $this->opencart->url->link('product/category', $url, 'SSL');
     }
 
-    return addslashes(str_replace('&amp;', '&', $link));
+    $link = str_replace('&amp;', '&', $link);
+
+    // Store SSL setting may still be http while the vitrine is opened over https.
+    if ($this->isSecure() && strpos($link, 'http://') === 0) {
+      $link = 'https://' . substr($link, 7);
+    }
+
+    return addslashes($link);
   }
 
   public function getPageBreadcrumb() {
