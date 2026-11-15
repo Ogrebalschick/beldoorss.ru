@@ -1,6 +1,6 @@
 <?php
 
-require DIR_SYSTEM . "library/elFinder/autoload.php";
+require DIR_SYSTEM . 'library/elfinder/autoload.php';
 
 class ControllerExtensionModuleFileManager extends Controller
 {
@@ -63,7 +63,7 @@ class ControllerExtensionModuleFileManager extends Controller
                     'uploadAllow' => array('image/x-ms-bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/x-icon', 'text/plain', 'application/x-javascript', 'text/javascript', 'text/css', 'text/html', 'application/vnd.groove-tool-template', 'text/x-php', 'text/troff', 'application/x-zip-compressed', 'application/zip', 'application/x-sql', 'text/x-sql', 'text/x-Algol68', 'text/x-c++', 'text/xml', 'application/xml', 'image/svg+xml'), // Mimetype `image` and `text/plain` allowed to upload 
                     // SV добавил php, js, css, html, troff-(это css), application/x-zip-compressed, application/zip, application/x-sql, text/x-sql, text/x-Algol68-(это sql), application/vnd.groove-tool-template(это .tpl).
                     'uploadOrder' => array('deny', 'allow'), // allowed Mimetype `image` and `text/plain` only
-                    'accessControl' => 'access', // disable and hide dot starting files (OPTIONAL)
+                    'accessControl' => array($this, 'access'), // disable and hide dot starting files (OPTIONAL)
                 ),
                 // Trash volume application/x-sql
                 array(
@@ -78,7 +78,7 @@ class ControllerExtensionModuleFileManager extends Controller
                     'uploadAllow' => array('image/x-ms-bmp', 'image/gif', 'image/jpeg', 'image/png', 'image/x-icon', 'text/plain', 'application/x-javascript', 'text/javascript', 'text/css', 'text/html', 'application/vnd.groove-tool-template', 'text/x-php', 'text/troff', 'application/x-zip-compressed', 'application/zip', 'application/x-sql', 'text/x-sql', 'text/x-Algol68', 'text/x-c++', 'text/xml', 'application/xml', 'image/svg+xml'), // Mimetype `image` and `text/plain` allowed to upload 
                     // SV добавил php, js, css, html, troff-(это css), application/x-zip-compressed, application/zip, application/x-sql, text/x-sql, text/x-Algol68-(это sql), application/vnd.groove-tool-template(это .tpl).
                     'uploadOrder' => array('deny', 'allow'), // Same as above
-                    'accessControl' => 'access', // Same as above
+                    'accessControl' => array($this, 'access'), // Same as above
                 )
             ),
         );
@@ -87,5 +87,14 @@ class ControllerExtensionModuleFileManager extends Controller
         $connector = new elFinderConnector(new elFinder($opts));
         $connector->run();
 
+    }
+
+    public function access($attr, $path, $data, $volume, $isDir = null, $relpath = '')
+    {
+        if (strpos(basename($path), '.') === 0) {
+            return !($attr == 'read' || $attr == 'write');
+        }
+
+        return null;
     }
 }
