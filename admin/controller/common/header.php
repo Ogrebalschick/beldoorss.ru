@@ -9,6 +9,26 @@ class ControllerCommonHeader extends Controller {
 			$data['base'] = HTTP_SERVER;
 		}
 
+		$data['icon'] = '';
+		$data['icon_type'] = '';
+		$icon = (string)$this->config->get('config_icon');
+
+		if ($icon !== '' && is_file(DIR_IMAGE . $icon)) {
+			$segments = explode('/', str_replace('\\', '/', $icon));
+			$data['icon'] = '/image/' . implode('/', array_map('rawurlencode', $segments)) . '?v=' . filemtime(DIR_IMAGE . $icon);
+			$types = array(
+				'ico'  => 'image/x-icon',
+				'png'  => 'image/png',
+				'jpg'  => 'image/jpeg',
+				'jpeg' => 'image/jpeg',
+				'gif'  => 'image/gif',
+				'svg'  => 'image/svg+xml',
+				'webp' => 'image/webp'
+			);
+			$extension = strtolower(pathinfo($icon, PATHINFO_EXTENSION));
+			$data['icon_type'] = isset($types[$extension]) ? $types[$extension] : '';
+		}
+
 		$data['description'] = $this->document->getDescription();
 		$data['keywords'] = $this->document->getKeywords();
 		$data['links'] = $this->document->getLinks();

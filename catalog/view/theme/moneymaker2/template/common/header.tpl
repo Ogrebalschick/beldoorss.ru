@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html dir="<?php echo $direction; ?>" lang="<?php echo $lang; ?>">
 <head>
+<?php if (!empty($icon)) { ?>
+<link rel="icon" href="<?php echo $icon; ?>"<?php echo $icon_type ? ' type="' . $icon_type . '"' : ''; ?> />
+<link rel="shortcut icon" href="<?php echo $icon; ?>"<?php echo $icon_type ? ' type="' . $icon_type . '"' : ''; ?> />
+<?php } ?>
 <meta name="yandex-verification" content="e46adb8b67e69704" />
 <meta charset="UTF-8" />
 <meta id="myViewport" name="viewport" content="width=390">

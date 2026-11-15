@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html dir="<?php echo $direction; ?>" lang="<?php echo $lang; ?>">
 <head>
+<?php if (!empty($icon)) { ?>
+<link rel="icon" href="<?php echo $icon; ?>"<?php echo $icon_type ? ' type="' . $icon_type . '"' : ''; ?> />
+<link rel="shortcut icon" href="<?php echo $icon; ?>"<?php echo $icon_type ? ' type="' . $icon_type . '"' : ''; ?> />
+<?php } ?>
 <meta charset="UTF-8" />
 <title><?php echo $title; ?></title>
 <base href="<?php echo $base; ?>" />

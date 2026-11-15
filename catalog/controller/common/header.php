@@ -20,8 +20,24 @@ class ControllerCommonHeader extends Controller {
 			$server = $this->config->get('config_url');
 		}
 
-		if (is_file(DIR_IMAGE . $this->config->get('config_icon'))) {
-			$this->document->addLink($server . 'image/' . $this->config->get('config_icon'), 'icon');
+		$data['icon'] = '';
+		$data['icon_type'] = '';
+		$icon = (string)$this->config->get('config_icon');
+
+		if ($icon !== '' && is_file(DIR_IMAGE . $icon)) {
+			$segments = explode('/', str_replace('\\', '/', $icon));
+			$data['icon'] = '/image/' . implode('/', array_map('rawurlencode', $segments)) . '?v=' . filemtime(DIR_IMAGE . $icon);
+			$types = array(
+				'ico'  => 'image/x-icon',
+				'png'  => 'image/png',
+				'jpg'  => 'image/jpeg',
+				'jpeg' => 'image/jpeg',
+				'gif'  => 'image/gif',
+				'svg'  => 'image/svg+xml',
+				'webp' => 'image/webp'
+			);
+			$extension = strtolower(pathinfo($icon, PATHINFO_EXTENSION));
+			$data['icon_type'] = isset($types[$extension]) ? $types[$extension] : '';
 		}
 
 		$data['title'] = $this->document->getTitle();
